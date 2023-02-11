@@ -1,6 +1,6 @@
 power on perm
 exec EnableRemarks
 unlock kinetis
-loadfile /Users/antoni/Documents/CAMBRIDGE/MRes/Courses/Embedded\ Systems\ for\ the\ Internet\ of\ Things/Coursework/Coursework\ 2/Code/Warp-firmware/build/ksdk1.1/work/demos/Glaux/armgcc/Glaux/release/Glaux.srec
+loadfile /Users/antoni/Documents/CAMBRIDGE/MRes/Courses/Embedded_Systems_for_the_Internet_of_Things/Coursework/Coursework_2/Code/Warp-firmware/build/ksdk1.1/work/demos/Glaux/armgcc/Glaux/release/Glaux.srec
 r
 go
