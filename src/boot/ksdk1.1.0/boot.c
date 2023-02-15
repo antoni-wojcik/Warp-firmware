@@ -1716,9 +1716,9 @@ main(void)
 	 *	Initialization: Devices hanging off SPI
 	 */
 
-	/*#if (WARP_BUILD_ENABLE_DEVSSD1331)
+	#if (WARP_BUILD_ENABLE_DEVSSD1331)
 		devSSD1331init();
-	#endif*/
+	#endif
 
 	#if (WARP_BUILD_ENABLE_DEVADXL362)
 		/*
