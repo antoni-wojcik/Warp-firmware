@@ -158,15 +158,20 @@ devSSD1331init(void)
 	writeCommand(0x3F);
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with screen clear...\n");
 
-
-
 	/*
-	 *	Read the manual for the SSD1331 (SSD1331_1.2.pdf) to figure
-	 *	out how to fill the entire screen with the brightest shade
-	 *	of green.
+	 *	Draw rectangle. It will be filled, because the fill setting was enabled.
 	 */
-
-	//...
+	writeCommand(kSSD1331CommandDRAWRECT);
+	writeCommand(0x00); // set column address of start
+	writeCommand(0x00); // set row address of start
+	writeCommand(0x5F); // set column address of end
+	writeCommand(0x3F); // set row address of end
+	writeCommand(0x00); // R intensity - outline
+	writeCommand(0xFF); // G intensity - outline
+	writeCommand(0x00); // B intensity - outline
+	writeCommand(0x00); // R intensity - fill
+	writeCommand(0xFF); // G intensity - fill
+	writeCommand(0x00); // B intensity - fill
 
 
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with draw rectangle...\n");
