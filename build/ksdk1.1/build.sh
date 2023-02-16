@@ -32,7 +32,7 @@
 	cp ../../src/boot/ksdk1.1.0/devISL23415.*			work/demos/Warp/src/
 	cp ../../src/boot/ksdk1.1.0/devMAX11300.*			work/demos/Warp/src/
 	cp ../../src/boot/ksdk1.1.0/devSSD1331.*			    work/demos/Warp/src/
-	cp ../../src/boot/ksdk1.1.0/CMakeLists-FRDMKL03.txt	work/demos/Warp/armgcc/Warp/CMakeLists.txt
+	cp ../../src/boot/ksdk1.1.0/CMakeLists-Warp.txt	work/demos/Warp/armgcc/Warp/CMakeLists.txt
 	cp ../../src/boot/ksdk1.1.0/startup_MKL03Z4.S		work/platform/startup/MKL03Z4/gcc/startup_MKL03Z4.S
 	cp ../../src/boot/ksdk1.1.0/gpio_pins.c				work/boards/Warp
 	cp ../../src/boot/ksdk1.1.0/gpio_pins.h				work/boards/Warp
