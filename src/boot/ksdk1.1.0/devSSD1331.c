@@ -159,7 +159,7 @@ devSSD1331init(void)
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with screen clear...\n");
 
 	/*
-	 *	Draw rectangle. It will be filled, because the fill setting was enabled.
+	 *	Draw rectangle. It will be filled because the fill setting was enabled.
 	 */
 	writeCommand(kSSD1331CommandDRAWRECT);
 	writeCommand(0x00); // set column address of start
