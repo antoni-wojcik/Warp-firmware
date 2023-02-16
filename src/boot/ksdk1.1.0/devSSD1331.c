@@ -131,13 +131,13 @@ devSSD1331init(void)
 	writeCommand(kSSD1331CommandVCOMH);		// 0xBE
 	writeCommand(0x3E);
 	writeCommand(kSSD1331CommandMASTERCURRENT);	// 0x87
-	writeCommand(0x06);
+	writeCommand(0x10);
 	writeCommand(kSSD1331CommandCONTRASTA);		// 0x81
-	writeCommand(0x91);
+	writeCommand(0x00);
 	writeCommand(kSSD1331CommandCONTRASTB);		// 0x82
-	writeCommand(0x50);
+	writeCommand(0xFF);
 	writeCommand(kSSD1331CommandCONTRASTC);		// 0x83
-	writeCommand(0x7D);
+	writeCommand(0x00);
 	writeCommand(kSSD1331CommandDISPLAYON);		// Turn on oled panel
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with initialization sequence...\n");
 
@@ -161,17 +161,17 @@ devSSD1331init(void)
 	/*
 	 *	Draw rectangle. It will be filled because the fill setting was enabled.
 	 */
-	int a = writeCommand(kSSD1331CommandDRAWRECT);
+	writeCommand(kSSD1331CommandDRAWRECT);
 	writeCommand(0x00); // set column address of start
 	writeCommand(0x00); // set row address of start
 	writeCommand(0x5F); // set column address of end
 	writeCommand(0x3F); // set row address of end
-	writeCommand(0xFF); // R intensity - outline
+	writeCommand(0x00); // R intensity - outline
 	writeCommand(0xFF); // G intensity - outline
-	writeCommand(0xFF); // B intensity - outline
-	writeCommand(0xFF); // R intensity - fill
+	writeCommand(0x00); // B intensity - outline
+	writeCommand(0x00); // R intensity - fill
 	writeCommand(0xFF); // G intensity - fill
-	writeCommand(0xFF); // B intensity - fill
+	writeCommand(0x00); // B intensity - fill
 
 
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with draw rectangle...\n");
