@@ -161,17 +161,17 @@ devSSD1331init(void)
 	/*
 	 *	Draw rectangle. It will be filled because the fill setting was enabled.
 	 */
-	writeCommand(kSSD1331CommandDRAWRECT);
+	int a = writeCommand(kSSD1331CommandDRAWRECT);
 	writeCommand(0x00); // set column address of start
 	writeCommand(0x00); // set row address of start
 	writeCommand(0x5F); // set column address of end
 	writeCommand(0x3F); // set row address of end
-	writeCommand(0x00); // R intensity - outline
+	writeCommand(0xFF); // R intensity - outline
 	writeCommand(0xFF); // G intensity - outline
-	writeCommand(0x00); // B intensity - outline
-	writeCommand(0x00); // R intensity - fill
+	writeCommand(0xFF); // B intensity - outline
+	writeCommand(0xFF); // R intensity - fill
 	writeCommand(0xFF); // G intensity - fill
-	writeCommand(0x00); // B intensity - fill
+	writeCommand(0xFF); // B intensity - fill
 
 
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with draw rectangle...\n");

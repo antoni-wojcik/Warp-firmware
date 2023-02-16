@@ -105,10 +105,10 @@
 	volatile WarpI2CDeviceState			deviceMMA8451QState;
 #endif
 
-#if (WARP_BUILD_ENABLE_DEVSSD1331)
+//#if (WARP_BUILD_ENABLE_DEVSSD1331)
 	#include "devSSD1331.h"
-	volatile WarpSPIDeviceState			deviceSSD1331State;
-#endif
+//	volatile WarpSPIDeviceState			deviceSSD1331State;
+//#endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
 	#include "devLPS25H.h"
@@ -1716,9 +1716,11 @@ main(void)
 	 *	Initialization: Devices hanging off SPI
 	 */
 
-	#if (WARP_BUILD_ENABLE_DEVSSD1331)
+	//#if (WARP_BUILD_ENABLE_DEVSSD1331)
+		warpPrint("About to devSSD1331init()... ");
 		devSSD1331init();
-	#endif
+		warpPrint("done.\n");
+	//#endif
 
 	#if (WARP_BUILD_ENABLE_DEVADXL362)
 		/*
