@@ -121,11 +121,11 @@ devSSD1331init(void)
 	writeCommand(kSSD1331CommandCLOCKDIV);		// 0xB3
 	writeCommand(0xF0);				// 7:4 = Oscillator Frequency, 3:0 = CLK Div Ratio (A[3:0]+1 = 1..16)
 	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8A
-	writeCommand(0x64);
+	writeCommand(0x00);
 	writeCommand(kSSD1331CommandPRECHARGEB);	// 0x8B
-	writeCommand(0x78);
+	writeCommand(0xFF);
 	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8C
-	writeCommand(0x64);
+	writeCommand(0x00);
 	writeCommand(kSSD1331CommandPRECHARGELEVEL);	// 0xBB
 	writeCommand(0x3A);
 	writeCommand(kSSD1331CommandVCOMH);		// 0xBE
