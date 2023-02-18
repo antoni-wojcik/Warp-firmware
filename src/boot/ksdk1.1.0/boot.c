@@ -109,6 +109,11 @@
 	#include "devSSD1331.h"
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+	#include "devINA219.h"
+	volatile WarpI2CDeviceState			deviceINA219State;
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
 	#include "devLPS25H.h"
 	volatile WarpI2CDeviceState			deviceLPS25HState;
@@ -1620,6 +1625,10 @@ main(void)
 		initMMA8451Q(	0x1D	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 	#endif
 
+	#if (WARP_BUILD_ENABLE_DEVINA219)
+		initINA219(	0x40	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsINA219 );
+	#endif
+
 	#if (WARP_BUILD_ENABLE_DEVLPS25H)
 		initLPS25H(	0x5C	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsLPS25H	);
 	#endif
@@ -2158,6 +2167,12 @@ main(void)
 					warpPrint("\r\t- 'k' AS7263			(0x00--0x2B): 2.7V -- 3.6V (compiled out) \n");
 				#endif
 
+				#if (WARP_BUILD_ENABLE_DEVINA219)
+					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x31): 3.0V -- 5.5V\n");
+				#else
+					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x31): 3.0V -- 5.5V (compiled out) \n");
+				#endif
+
 				warpPrint("\r\tEnter selection> ");
 				key = warpWaitKey();
 
@@ -2307,6 +2322,16 @@ main(void)
 						break;
 					}
 #endif
+
+#if (WARP_BUILD_ENABLE_DEVINA219)
+					case 'l':
+					{
+						menuTargetSensor = kWarpSensorINA219;
+						menuI2cDevice = &deviceINA219State;
+						break;
+					}
+#endif
+
 					default:
 					{
 						warpPrint("\r\tInvalid selection '%c' !\n", key);
@@ -3109,6 +3134,11 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 					0x01/* Normal read 8bit, 800Hz, normal, active mode */
 					);
 	#endif
+	#if (WARP_BUILD_ENABLE_DEVINA219)
+	numberOfConfigErrors += configureSensorINA219(0x00,/* Payload: Disable FIFO */
+					ADDRESS/* Normal read 8bit, 800Hz, normal, active mode */
+					);
+	#endif
 	#if (WARP_BUILD_ENABLE_DEVMAG3110)
 	numberOfConfigErrors += configureSensorMAG3110(	0x00,/*	Payload: DR 000, OS 00, 80Hz, ADC 1280, Full 16bit, standby mode to set up register*/
 					0xA0,/*	Payload: AUTO_MRST_EN enable, RAW value without offset */
@@ -3190,6 +3220,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 			warpPrint(" MMA8451 x, MMA8451 y, MMA8451 z,");
 		#endif
 
+		#if (WARP_BUILD_ENABLE_DEVINA219)
+			warpPrint(" INA219 BLA BLA BLA,");
+		#endif
+
 		#if (WARP_BUILD_ENABLE_DEVMAG3110)
 			warpPrint(" MAG3110 x, MAG3110 y, MAG3110 z, MAG3110 Temp,");
 		#endif
@@ -3235,6 +3269,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 
 		#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 			printSensorDataMMA8451Q(hexModeFlag);
+		#endif
+
+		#if (WARP_BUILD_ENABLE_DEVINA219)
+			printSensorDataINA219(hexModeFlag);
 		#endif
 
 		#if (WARP_BUILD_ENABLE_DEVMAG3110)
@@ -3474,6 +3512,35 @@ repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t
 						);
 			#else
 				warpPrint("\r\n\tMMA8451Q Read Aborted. Device Disabled :(");
+			#endif
+
+			break;
+		}
+
+		case kWarpSensorINA219:
+		{
+			/*
+			 *	INA219: VDD 3.0--5.5
+			 */
+			#if (WARP_BUILD_ENABLE_DEVINA219)
+				loopForSensor(	"\r\nINA219:\n\r",		/*	tagString			*/
+						&readSensorRegisterINA219,	/*	readSensorRegisterFunction	*/
+						&deviceINA219State,		/*	i2cDeviceState			*/
+						NULL,				/*	spiDeviceState			*/
+						baseAddress,			/*	baseAddress			*/
+						ADDRESS,				/*	minAddress			*/
+						ADDRESS,				/*	maxAddress			*/
+						repetitionsPerAddress,		/*	repetitionsPerAddress		*/
+						chunkReadsPerAddress,		/*	chunkReadsPerAddress		*/
+						spinDelay,			/*	spinDelay			*/
+						autoIncrement,			/*	autoIncrement			*/
+						sssupplyMillivolts,		/*	sssupplyMillivolts		*/
+						referenceByte,			/*	referenceByte			*/
+						adaptiveSssupplyMaxMillivolts,	/*	adaptiveSssupplyMaxMillivolts	*/
+						chatty				/*	chatty				*/
+						);
+			#else
+				warpPrint("\r\n\tINA219 Read Aborted. Device Disabled :(");
 			#endif
 
 			break;
