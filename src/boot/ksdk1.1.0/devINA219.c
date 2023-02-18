@@ -93,11 +93,11 @@ configureSensorINA219(uint16_t payloadCONF, uint16_t payloadCAL)
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
-	i2cWriteStatus1 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterMMA8451QF_SETUP /* register address F_SETUP */,
+	i2cWriteStatus1 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterINA219 /* register address F_SETUP */,
 							payloadCONF/* payload: Configure the sensor */
 							);
 
-	i2cWriteStatus2 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterMMA8451QCTRL_REG1 /* register address CTRL_REG1 */,
+	i2cWriteStatus2 = writeSensorRegisterINA219(kWarpSensorOutputRegisterINA219_CAL /* register address CTRL_REG1 */,
 							payloadCAL /* payload: Calibrate the sensor for current measuremnts */
 							);
 
@@ -165,20 +165,24 @@ printSensorDataINA219(bool hexModeFlag)
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
+
+    /* Read the shunt voltage. In the standard setting, the shunt voltage LSB is 0.01 mV */
 	i2cReadStatus = readSensorRegisterINA219(kWarpSensorOutputRegisterINA219_SHUNT, 2 /* numberOfBytes */);
 	readSensorRegisterValueMSB = deviceINA219State.i2cBuffer[0];
 	readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
 	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
 
-    int16_t shuntVoltage = readSensorRegisterValueCombined;
+    int16_t shuntVoltage = readSensorRegisterValueCombined; /* 1 bit for the sign, 15 bits for the */
 
+    /* Read the bus voltage. The bus voltage LSB is always 4mV */
     i2cReadStatus = readSensorRegisterINA219(kWarpSensorOutputRegisterINA219_SHUNT, 2 /* numberOfBytes */);
 	readSensorRegisterValueMSB = deviceINA219State.i2cBuffer[0];
 	readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
 	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
 
-    bool busVoltageOverflow
-    int16_t busVoltage = readSensorRegisterValueCombined;
+    bool busVoltageOverflow = readSensorRegisterValueLSB & 0x01;
+//  bool convReadyBit = readSensorRegisterValueLSB & 0x02;
+    int16_t busVoltage = readSensorRegisterValueCombined >> 3;
 
 	/*
 	 *	Sign extend the 14-bit value based on knowledge that upper 2 bit are 0:
@@ -187,7 +191,7 @@ printSensorDataINA219(bool hexModeFlag)
 
 	if (i2cReadStatus != kWarpStatusOK)
 	{
-		warpPrint(" ----,");
+		warpPrint(" ----, ----,");
 	}
 	else
 	{
@@ -197,7 +201,14 @@ printSensorDataINA219(bool hexModeFlag)
 		}
 		else
 		{
-			warpPrint(" %d,", readSensorRegisterValueCombined);
+            if (busVoltageOverflow)
+            {
+                warpPrint(" BUS VOLTAGE OVERFLOW, %d, %d,", shuntVoltage, busVoltage);
+            }
+            else
+            {
+			    warpPrint(" %d, %d,", shuntVoltage, busVoltage);
+            }
 		}
 	}
 }
