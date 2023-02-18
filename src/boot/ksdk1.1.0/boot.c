@@ -2168,9 +2168,9 @@ main(void)
 				#endif
 
 				#if (WARP_BUILD_ENABLE_DEVINA219)
-					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x31): 3.0V -- 5.5V\n");
+					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x05): 3.0V -- 5.5V\n");
 				#else
-					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x31): 3.0V -- 5.5V (compiled out) \n");
+					warpPrint("\r\t- 'l' DEVINA219			(0x00--0x05): 3.0V -- 5.5V (compiled out) \n");
 				#endif
 
 				warpPrint("\r\tEnter selection> ");
@@ -3135,8 +3135,8 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 					);
 	#endif
 	#if (WARP_BUILD_ENABLE_DEVINA219)
-	numberOfConfigErrors += configureSensorINA219(0x00,/* Payload: Disable FIFO */
-					ADDRESS/* Normal read 8bit, 800Hz, normal, active mode */
+	numberOfConfigErrors += configureSensorINA219(0x399F, /* Set the configuration register */
+					0x4FFF /* Calibrate the sensor for current measurement */
 					);
 	#endif
 	#if (WARP_BUILD_ENABLE_DEVMAG3110)
@@ -3221,7 +3221,7 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 		#endif
 
 		#if (WARP_BUILD_ENABLE_DEVINA219)
-			warpPrint(" INA219 BLA BLA BLA,");
+			warpPrint(" INA219 Shunt Voltage, INA219 Bus Voltage,");
 		#endif
 
 		#if (WARP_BUILD_ENABLE_DEVMAG3110)
@@ -3528,8 +3528,8 @@ repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t
 						&deviceINA219State,		/*	i2cDeviceState			*/
 						NULL,				/*	spiDeviceState			*/
 						baseAddress,			/*	baseAddress			*/
-						ADDRESS,				/*	minAddress			*/
-						ADDRESS,				/*	maxAddress			*/
+						0x00,				/*	minAddress			*/
+						0x05,				/*	maxAddress			*/
 						repetitionsPerAddress,		/*	repetitionsPerAddress		*/
 						chunkReadsPerAddress,		/*	chunkReadsPerAddress		*/
 						spinDelay,			/*	spinDelay			*/
