@@ -301,6 +301,21 @@ printCurrentMicroamperesINA219()
 	}
 }
 
+/* Repeat current measurements n times */
+void
+repeatPrintCurrentMicroamperesINA219(int nTimes)
+{
+	configureSensorINA219(0x399F, /* Set the configuration register */
+						  0x4FFF  /* Calibrate the sensor for current measurement */
+						  );
+	
+	warpPrint("\r");
+	for(int i = 0; i < 1000; i++) {
+		printCurrentMicroamperesINA219();
+	}
+	warpPrint("\n");
+}
+
 /* Utility to find all detected I2C slave addresses and list them */
 void
 searchOverI2CSlaveAddresses() {

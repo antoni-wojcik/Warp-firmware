@@ -6,4 +6,5 @@ WarpStatus	writeSensorRegisterINA219(uint8_t deviceRegister, uint16_t payloadBty
 WarpStatus	configureSensorINA219(uint16_t payloadCONF, uint16_t payloadCAL);
 void		printAllSensorDataINA219(bool hexModeFlag);
 void		printCurrentMicroamperesINA219();
+void        repeatPrintCurrentMicroamperesINA219(int nTimes);
 void        searchOverI2CSlaveAddresses();
