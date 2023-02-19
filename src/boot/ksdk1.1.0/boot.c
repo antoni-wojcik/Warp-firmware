@@ -2067,12 +2067,12 @@ main(void)
 			warpPrint("\r- 'v': Enter VLLS0 low-power mode for 3s, then reset\n");
 		#endif
 
+		warpPrint("\r- 'x': disable SWD and spin for 10 secs.\n");
+		warpPrint("\r- 'z': perpetually dump all sensor data.\n");
+
 		#if (WARP_BUILD_ENABLE_DEVINA219)
 			warpPrint("\r- 'I': print 1000 current measurements (in uA) from INA219.\n");
 		#endif
-
-		warpPrint("\r- 'x': disable SWD and spin for 10 secs.\n");
-		warpPrint("\r- 'z': perpetually dump all sensor data.\n");
 
 		warpPrint("\rEnter selection> ");
 		key = warpWaitKey();
