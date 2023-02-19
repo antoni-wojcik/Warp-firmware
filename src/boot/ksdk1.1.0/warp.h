@@ -111,7 +111,8 @@ typedef enum
 	kWarpSensorConfigurationRegisterMMA8451QF_SETUP			= 0x09,
 	kWarpSensorConfigurationRegisterMMA8451QCTRL_REG1		= 0x2A,
 
-	kWarpSensorConfigurationRegisterINA219					= 0x00,
+	kWarpSensorConfigurationRegisterINA219_CONF					= 0x00,
+	kWarpSensorConfigurationRegisterINA219_CAL					= 0x05,
 
 	kWarpSensorConfigurationRegisterMAG3110CTRL_REG1		= 0x10,
 	kWarpSensorConfigurationRegisterMAG3110CTRL_REG2		= 0x11,
@@ -181,7 +182,6 @@ typedef enum
 	kWarpSensorOutputRegisterINA219_BUS					= 0x02,
 	kWarpSensorOutputRegisterINA219_POWER				= 0x03,
 	kWarpSensorOutputRegisterINA219_CURRENT				= 0x04,
-	kWarpSensorOutputRegisterINA219_CAL					= 0x05,
 
 	kWarpSensorOutputRegisterMAG3110OUT_X_MSB			= 0x01,
 	kWarpSensorOutputRegisterMAG3110OUT_X_LSB			= 0x02,

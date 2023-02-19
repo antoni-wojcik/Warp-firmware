@@ -93,11 +93,11 @@ configureSensorINA219(uint16_t payloadCONF, uint16_t payloadCAL)
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
-	i2cWriteStatus1 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterINA219 /* register address F_SETUP */,
+	i2cWriteStatus1 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterINA219_CONF /* register address CONFIGURATION */,
 							payloadCONF/* payload: Configure the sensor */
 							);
 
-	i2cWriteStatus2 = writeSensorRegisterINA219(kWarpSensorOutputRegisterINA219_CAL /* register address CTRL_REG1 */,
+	i2cWriteStatus2 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterINA219_CAL /* register address CALIBRATION */,
 							payloadCAL /* payload: Calibrate the sensor for current measuremnts */
 							);
 
