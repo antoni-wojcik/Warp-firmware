@@ -1862,6 +1862,11 @@ main(void)
 	gWarpBooted = true;
 	warpPrint("Boot done.\n");
 
+	/* Add section to print out measured current by INA219 */
+	#if (WARP_BUILD_ENABLE_DEVINA219)
+		repeatPrintCurrentMicroamperesINA219(1000);
+	#endif
+
 	#if (WARP_BUILD_BOOT_TO_CSVSTREAM)
 		printBootSplash(gWarpCurrentSupplyVoltage, menuRegisterAddress, &powerManagerCallbackStructure);
 
@@ -2056,6 +2061,10 @@ main(void)
 
 		#if (WARP_BUILD_ENABLE_DEVRV8803C7)
 			warpPrint("\r- 'v': Enter VLLS0 low-power mode for 3s, then reset\n");
+		#endif
+
+		#if (WARP_BUILD_ENABLE_DEVINA219)
+			warpPrint("\r- 'I': print 1000 current measurements (in uA) from INA219.\n");
 		#endif
 
 		warpPrint("\r- 'x': disable SWD and spin for 10 secs.\n");
@@ -3092,6 +3101,17 @@ main(void)
 				break;
 			}
 
+			#if (WARP_BUILD_ENABLE_DEVINA219)
+				case 'I':
+				{
+					warpPrint("\r\n\tNumber current measurements (e.g., '1000')> ");
+					int nTimes = read4digits();
+
+					repeatPrintCurrentMicroamperesINA219(nTimes);
+
+					break;
+				}
+			#endif
 
 			/*
 			 *	Ignore naked returns.
