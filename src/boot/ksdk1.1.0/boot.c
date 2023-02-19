@@ -1627,6 +1627,10 @@ main(void)
 
 	#if (WARP_BUILD_ENABLE_DEVINA219)
 		initINA219(	0x40	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsINA219 );
+
+		configureSensorINA219(0x399F, /* Set the configuration register */
+						      0x4FFF  /* Calibrate the sensor for current measurement */
+						     );
 	#endif
 
 	#if (WARP_BUILD_ENABLE_DEVLPS25H)
