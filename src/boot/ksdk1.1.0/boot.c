@@ -1868,6 +1868,7 @@ main(void)
 
 	/* Add section to print out measured current by INA219 */
 	#if (WARP_BUILD_ENABLE_DEVINA219)
+		warpPrint("Printing 1000 current measurements (in uA) after boot.");
 		repeatPrintCurrentMicroamperesINA219(1000);
 	#endif
 
