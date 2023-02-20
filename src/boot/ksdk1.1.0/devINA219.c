@@ -101,8 +101,6 @@ configureSensorINA219(uint16_t payloadCONF, uint16_t payloadCAL)
 							payloadCAL /* payload: Calibrate the sensor for current measuremnts */
 							);
 
-	warpPrint("\r\n\tINA219 INITIALIZATION: %d, %d\n", i2cWriteStatus1, i2cWriteStatus2);
-
 	return (i2cWriteStatus1 | i2cWriteStatus2);
 }
 
