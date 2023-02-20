@@ -26,6 +26,8 @@ extern volatile uint32_t		gWarpI2cBaudRateKbps;
 extern volatile uint32_t		gWarpI2cTimeoutMilliseconds;
 extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
 
+#define INA219_READ_CURRENT_DIRECTLY	false
+
 
 
 void
@@ -270,7 +272,7 @@ printAllSensorDataINA219(bool hexModeFlag)
 }
 
 void
-printCurrentMicroamperesINA219()
+printCurrentMicroamperesINA219(bool readCurrentDirectly)
 {
 	uint16_t	readSensorRegisterValueLSB;
 	uint16_t	readSensorRegisterValueMSB;
@@ -282,23 +284,35 @@ printCurrentMicroamperesINA219()
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
+	if (readCurrentDirectly)
+	{
+		/* Read the current. With the CALIBRATION REGISTER set to 0x4FFF, the current LSB is 20 uA */
+		i2cReadStatus = readSensorRegisterINA219(kWarpSensorOutputRegisterINA219_CURRENT, 2 /* numberOfBytes */);
+		readSensorRegisterValueMSB = deviceINA219State.i2cBuffer[0];
+		readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
+		readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
 
-	/* Read the current. With the CALIBRATION REGISTER set to 0x4FFF, the current LSB is 20 uA */
-	i2cReadStatus = readSensorRegisterINA219(kWarpSensorOutputRegisterINA219_CURRENT, 2 /* numberOfBytes */);
-	readSensorRegisterValueMSB = deviceINA219State.i2cBuffer[0];
-	readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
-	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
+		currentMicroamperes = (int32_t)(readSensorRegisterValueCombined) * 20; // raw data * 20 uA
+	} 
+	else 
+	{
+		/* Read the shunt voltage. With the With the CONFIGURATION REGISTER set to 0x399F, the shunt voltage LSB is 0.01 mV */
+		i2cReadStatus = readSensorRegisterINA219(kWarpSensorOutputRegisterINA219_SHUNT, 2 /* numberOfBytes */);
+		readSensorRegisterValueMSB = deviceINA219State.i2cBuffer[0];
+		readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
+		readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
 
-	currentMicroamperes = (int32_t)(readSensorRegisterValueCombined) * 20; // raw data * 20 uA
+		currentMicroamperes = (int32_t)(readSensorRegisterValueCombined) * 100; // raw data * 10 uV / 0.1 Ohm. Final value in uA
+	}
 
 
 	if (i2cReadStatus != kWarpStatusOK)
 	{
-		warpPrint(" ----,");
+		warpPrint("---- ");
 	}
 	else
 	{
-		warpPrint(" %d,", currentMicroamperes);
+		warpPrint("%d, ", currentMicroamperes);
 	}
 }
 
@@ -306,9 +320,13 @@ printCurrentMicroamperesINA219()
 void
 repeatPrintCurrentMicroamperesINA219(int nTimes)
 {
+	configureSensorINA219(0x399F, /* Set the configuration register */
+						  0x4FFF  /* Calibrate the sensor for current measurement */
+						 );
+
 	warpPrint("\r");
 	for(int i = 0; i < 1000; i++) {
-		printCurrentMicroamperesINA219();
+		printCurrentMicroamperesINA219(INA219_READ_CURRENT_DIRECTLY);
 	}
 	warpPrint("\n");
 }
