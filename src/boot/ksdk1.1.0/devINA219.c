@@ -256,7 +256,8 @@ printAllSensorDataINA219(bool hexModeFlag)
 	{
 		if (!hexModeFlag)
 		{
-			resistance = (int32_t)((float)(busVoltage) / (float)(current) * 200.0f); /* times 200 because of the factors from LSBs */
+			resistance = (int32_t)((float)(busVoltage) / (float)(current) * 200000.0f);
+			/* times 200 because of the factors from LSBs and times 1000 because the final value is in mili Ohms */
 
             if (busVoltageOverflow)
             {
