@@ -200,6 +200,8 @@ printAllSensorDataINA219(bool hexModeFlag)
 	uint16_t	busVoltage;
 	int16_t 	current;
 
+	int32_t resistance;
+
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
@@ -254,15 +256,15 @@ printAllSensorDataINA219(bool hexModeFlag)
 	{
 		if (!hexModeFlag)
 		{
-			int16_t resistanceInt = (int16_t)((float)(busVoltage) / (float)(current) * 200.0f); /* times 200 because of the factors from LSBs */
+			resistance = (int32_t)((float)(busVoltage) / (float)(current) * 200.0f); /* times 200 because of the factors from LSBs */
 
             if (busVoltageOverflow)
             {
-                warpPrint(" %d, (BUS VOLTAGE OVERFLOW) %u, %d, %d,", shuntVoltage, busVoltage, current, resistanceInt);
+                warpPrint(" %d, (BUS VOLTAGE OVERFLOW) %u, %d, %d,", shuntVoltage, busVoltage, current, resistance);
             }
             else
             {
-			    warpPrint(" %d, %u, %d, %d,", shuntVoltage, busVoltage, current, resistanceInt);
+			    warpPrint(" %d, %u, %d, %d,", shuntVoltage, busVoltage, current, resistance);
             }
 		}
 	}
@@ -276,7 +278,7 @@ printCurrentMicroamperesINA219()
 	int16_t		readSensorRegisterValueCombined;
 	WarpStatus	i2cReadStatus;
 
-	int16_t 	currentMicroamperes;
+	int32_t 	currentMicroamperes;
 
 
 	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
@@ -288,7 +290,7 @@ printCurrentMicroamperesINA219()
 	readSensorRegisterValueLSB = deviceINA219State.i2cBuffer[1];
 	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 8) | readSensorRegisterValueLSB;
 
-	currentMicroamperes = readSensorRegisterValueCombined * 20; // raw data * 20 uA
+	currentMicroamperes = (int32_t)(readSensorRegisterValueCombined) * 20; // raw data * 20 uA
 
 
 	if (i2cReadStatus != kWarpStatusOK)
