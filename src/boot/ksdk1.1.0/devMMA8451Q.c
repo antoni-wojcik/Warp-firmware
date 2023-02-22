@@ -64,11 +64,26 @@ extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
 
 
 
+#define MMA8451Q_ACC_BUFFER_SIZE 200 // 20 Hz for 10s = 200 measurements
+
+static int16_t accXBuff[MMA8451Q_ACC_BUFFER_SIZE];
+static int16_t accYBuff[MMA8451Q_ACC_BUFFER_SIZE];
+static int16_t accZBuff[MMA8451Q_ACC_BUFFER_SIZE];
+
+static uint8_t maxActivityAxis;
+
+
 void
 initMMA8451Q(const uint8_t i2cAddress, uint16_t operatingVoltageMillivolts)
 {
 	deviceMMA8451QState.i2cAddress			= i2cAddress;
 	deviceMMA8451QState.operatingVoltageMillivolts	= operatingVoltageMillivolts;
+
+	memset(accXBuff, 0, sizeof accXBuff);
+	memset(accYBuff, 0, sizeof accYBuff);
+	memset(accZBuff, 0, sizeof accZBuff);
+
+	buffPointer = 0;
 
 	return;
 }
@@ -305,4 +320,48 @@ printSensorDataMMA8451Q(bool hexModeFlag)
 			warpPrint(" %d,", readSensorRegisterValueCombined);
 		}
 	}
+}
+
+int16_t
+getRegisterValueCombined(WarpSensorOutputRegister address)
+{
+	uint16_t	readSensorRegisterValueLSB;
+	uint16_t	readSensorRegisterValueMSB;
+	int16_t		readSensorRegisterValueCombined;
+	WarpStatus	i2cReadStatus;
+
+	i2cReadStatus = readSensorRegisterMMA8451Q(address, 2 /* numberOfBytes */);
+	readSensorRegisterValueMSB = deviceMMA8451QState.i2cBuffer[0];
+	readSensorRegisterValueLSB = deviceMMA8451QState.i2cBuffer[1];
+	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 6) | (readSensorRegisterValueLSB >> 2);
+
+	/*
+	 *	Sign extend the 14-bit value based on knowledge that upper 2 bit are 0:
+	 */
+	readSensorRegisterValueCombined = (readSensorRegisterValueCombined ^ (1 << 13)) - (1 << 13);
+
+	return readSensorRegisterValueCombined;
+}
+
+void 
+gatherAccData()
+{
+	uint8_t buffPointer = 0;
+
+	while(buffPointer < MMA8451Q_ACC_BUFFER_SIZE)
+		warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+
+		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
+		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
+		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
+
+		// Probably should be lowpass filtered
+
+		buffPointer = (buffPointer + 1) % MMA8451Q_ACC_BUFFER_SIZE;
+}
+
+void 
+analyzeAccData()
+{
+
 }
