@@ -1862,11 +1862,9 @@ main(void)
 	gWarpBooted = true;
 	warpPrint("Boot done.\n");
 
-	/* Add section to print out measured current by INA219 */
-	#if (WARP_BUILD_ENABLE_DEVINA219)
-		warpPrint("Printing 1000 current measurements (in uA) after boot.");
-		repeatPrintCurrentMicroamperesINA219(1000);
-	#endif
+	// Print MMA8451Q buffers
+	collectMMA8451QAccData();
+	printMMA8451QBuffers();
 
 	#if (WARP_BUILD_BOOT_TO_CSVSTREAM)
 		printBootSplash(gWarpCurrentSupplyVoltage, menuRegisterAddress, &powerManagerCallbackStructure);

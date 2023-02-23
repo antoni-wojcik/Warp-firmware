@@ -70,20 +70,12 @@ static int16_t accXBuff[MMA8451Q_ACC_BUFFER_SIZE];
 static int16_t accYBuff[MMA8451Q_ACC_BUFFER_SIZE];
 static int16_t accZBuff[MMA8451Q_ACC_BUFFER_SIZE];
 
-static uint8_t maxActivityAxis;
-
 
 void
 initMMA8451Q(const uint8_t i2cAddress, uint16_t operatingVoltageMillivolts)
 {
 	deviceMMA8451QState.i2cAddress			= i2cAddress;
 	deviceMMA8451QState.operatingVoltageMillivolts	= operatingVoltageMillivolts;
-
-	memset(accXBuff, 0, sizeof accXBuff);
-	memset(accYBuff, 0, sizeof accYBuff);
-	memset(accZBuff, 0, sizeof accZBuff);
-
-	buffPointer = 0;
 
 	return;
 }
@@ -344,24 +336,40 @@ getRegisterValueCombined(WarpSensorOutputRegister address)
 }
 
 void 
-gatherAccData()
+collectMMA8451QAccData()
 {
 	uint8_t buffPointer = 0;
 
-	while(buffPointer < MMA8451Q_ACC_BUFFER_SIZE)
+	const uint8_t timeFrame = 50; // ms 
+	// uint_t previousTime = 
+
+	for(uint8_t i = 0; i < MMA8451Q_ACC_BUFFER_SIZE; i++)
+	{
 		warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 
-		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
-		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
-		accXBuff[buffPointer] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
+		accXBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
+		accYBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
+		accZBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
 
-		// Probably should be lowpass filtered
+		OSA_TimeDelay(timeFrame);
 
-		buffPointer = (buffPointer + 1) % MMA8451Q_ACC_BUFFER_SIZE;
+		i++;
+	}
+}
+
+void
+printMMA8451QBuffers()
+{
+	for(uint8_t i = 0; i < MMA8451Q_ACC_BUFFER_SIZE; i++)
+	{
+		warpPrint("%d: %d, %d, %d\n", i, accXBuff[i], accYBuff[i], accZBuff[i]);
+	}
 }
 
 void 
-analyzeAccData()
+processAccData()
 {
+	// lowpass filter the data
 
+	// extract features
 }
