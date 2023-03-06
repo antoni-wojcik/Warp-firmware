@@ -36,6 +36,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 #include <stdlib.h>
+#include <math.h>
 
 /*
  *	config.h needs to come first
@@ -65,10 +66,9 @@ extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
 
 
 #define MMA8451Q_ACC_BUFFER_SIZE 200 // 20 Hz for 10s = 200 measurements
+#define MMA8451Q_ACC_NUM_FEATURES 16 
 
-static int16_t accXBuff[MMA8451Q_ACC_BUFFER_SIZE];
-static int16_t accYBuff[MMA8451Q_ACC_BUFFER_SIZE];
-static int16_t accZBuff[MMA8451Q_ACC_BUFFER_SIZE];
+volatile float featureBuff[MMA8451Q_ACC_NUM_FEATURES];
 
 
 void
@@ -335,41 +335,19 @@ getRegisterValueCombined(WarpSensorOutputRegister address)
 	return readSensorRegisterValueCombined;
 }
 
-void 
-collectMMA8451QAccData()
-{
-	uint8_t buffPointer = 0;
-
-	const uint8_t timeFrame = 50; // ms 
-	// uint_t previousTime = 
-
-	for(uint8_t i = 0; i < MMA8451Q_ACC_BUFFER_SIZE; i++)
-	{
-		warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
-
-		accXBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
-		accYBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
-		accZBuff[i] = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
-
-		OSA_TimeDelay(timeFrame);
-
-		i++;
-	}
-}
-
 void
 printMMA8451QBuffers()
 {
+	int16_t accX;
+	int16_t accY;
+	int16_t accZ;
+
 	for(uint8_t i = 0; i < MMA8451Q_ACC_BUFFER_SIZE; i++)
 	{
-		warpPrint("%d: %d, %d, %d\n", i, accXBuff[i], accYBuff[i], accZBuff[i]);
+		accX = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
+		accY = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
+		accZ = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
+
+		warpPrint("%d: %d, %d, %d\n", i, accX, accY, accZ);
 	}
-}
-
-void 
-processAccData()
-{
-	// lowpass filter the data
-
-	// extract features
 }
