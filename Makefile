@@ -19,12 +19,10 @@ warp:
 	cp src/boot/ksdk1.1.0/gpio_pins.c				build/ksdk1.1/work/boards/Warp
 	cp src/boot/ksdk1.1.0/gpio_pins.h				build/ksdk1.1/work/boards/Warp
 	cp src/boot/ksdk1.1.0/config.h					build/ksdk1.1/work/boards/Warp
-	cp src/boot/ksdk1.1.0/glaux.h					build/ksdk1.1/work/boards/Warp
 	cp src/boot/ksdk1.1.0/CMakeLists-Warp.txt			build/ksdk1.1/work/demos/Warp/armgcc/Warp/CMakeLists.txt
 	cp src/boot/ksdk1.1.0/devMMA8451Q.*				build/ksdk1.1/work/demos/Warp/src/
 	cp src/boot/ksdk1.1.0/devSSD1331.*				build/ksdk1.1/work/demos/Warp/src/
 	cp src/boot/ksdk1.1.0/devINA219.*				build/ksdk1.1/work/demos/Warp/src/
-	cp src/boot/ksdk1.1.0/devRV8803C7.*				build/ksdk1.1/work/demos/Warp/src/
 	cd build/ksdk1.1/work/lib/ksdk_platform_lib/armgcc/KL03Z4 && ./clean.sh; ./build_release.sh
 	cd build/ksdk1.1/work/demos/Warp/armgcc/Warp && ./clean.sh; ./build_release.sh
 	@echo "\n\nNow, run\n\n\tmake load-warp\n\n"

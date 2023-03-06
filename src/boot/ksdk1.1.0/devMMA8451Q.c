@@ -113,7 +113,7 @@ writeSensorRegisterMMA8451Q(uint8_t deviceRegister, uint8_t payload)
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 	commandByte[0] = deviceRegister;
 	payloadByte[0] = payload;
 	warpEnableI2Cpins();
@@ -140,7 +140,7 @@ configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1)
 	WarpStatus	i2cWriteStatus1, i2cWriteStatus2;
 
 
-	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 
 	i2cWriteStatus1 = writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QF_SETUP /* register address F_SETUP */,
 							payloadF_SETUP /* payload: Disable FIFO */
@@ -191,7 +191,7 @@ readSensorRegisterMMA8451Q(uint8_t deviceRegister, int numberOfBytes)
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 	cmdBuf[0] = deviceRegister;
 	warpEnableI2Cpins();
 
@@ -221,7 +221,7 @@ printSensorDataMMA8451Q(bool hexModeFlag)
 	WarpStatus	i2cReadStatus;
 
 
-	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
 
 	/*
 	 *	From the MMA8451Q datasheet:

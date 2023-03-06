@@ -56,7 +56,6 @@
 #include "fsl_mcglite_hal.h"
 #include "fsl_port_hal.h"
 #include "fsl_lpuart_driver.h"
-#include "glaux.h"
 #include "warp.h"
 #include "errstrs.h"
 #include "gpio_pins.h"
@@ -111,30 +110,6 @@ uint8_t							gWarpSpiCommonSourceBuffer[kWarpMemoryCommonSpiBufferBytes];
 uint8_t							gWarpSpiCommonSinkBuffer[kWarpMemoryCommonSpiBufferBytes];
 
 static void						lowPowerPinStates(void);
-
-#if (!WARP_BUILD_ENABLE_GLAUX_VARIANT && !WARP_BUILD_ENABLE_FRDMKL03)
-	static void					disableTPS62740(void);
-	static void					enableTPS62740(uint16_t voltageMillivolts);
-	static void					setTPS62740CommonControlLines(uint16_t voltageMillivolts);
-#endif
-
-static void						dumpProcessorState(void);
-static void						repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t baseAddress,
-								bool autoIncrement, int chunkReadsPerAddress, bool chatty,
-								int spinDelay, int repetitionsPerAddress, uint16_t sssupplyMillivolts,
-								uint16_t adaptiveSssupplyMaxMillivolts, uint8_t referenceByte);
-static int						char2int(int character);
-static void						activateAllLowPowerSensorModes(bool verbose);
-static void						powerupAllSensors(void);
-static uint8_t						readHexByte(void);
-static int						read4digits(void);
-static void						printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelayBetweenEachRun, bool loopForever);
-
-/*
- *	TODO: change the following to take byte arrays
- */
-WarpStatus						writeByteToI2cDeviceRegister(uint8_t i2cAddress, bool sendCommandByte, uint8_t commandByte, bool sendPayloadByte, uint8_t payloadByte);
-WarpStatus						writeBytesToSpi(uint8_t *  payloadBytes, int payloadLength);
 
 
 
@@ -427,239 +402,6 @@ lowPowerPinStates(void)
 
 
 
-#if (!WARP_BUILD_ENABLE_GLAUX_VARIANT && !WARP_BUILD_ENABLE_FRDMKL03)
-void
-enableTPS62740(uint16_t voltageMillivolts)
-{
-	/*
-	 *	By default, assusme pins are currently disabled (e.g., by a recent lowPowerPinStates())
-	 *
-	 *	Setup:
-	 *		PTB5/kWarpPinTPS62740_REGCTRL for GPIO
-	 *		PTB6/kWarpPinTPS62740_VSEL4 for GPIO
-	 *		PTB7/kWarpPinTPS62740_VSEL3 for GPIO
-	 *		PTB10/kWarpPinTPS62740_VSEL2 for GPIO
-	 *		PTB11/kWarpPinTPS62740_VSEL1 for GPIO
-	 */
-	PORT_HAL_SetMuxMode(PORTB_BASE, 5, kPortMuxAsGpio);
-	PORT_HAL_SetMuxMode(PORTB_BASE, 6, kPortMuxAsGpio);
-	PORT_HAL_SetMuxMode(PORTB_BASE, 7, kPortMuxAsGpio);
-	PORT_HAL_SetMuxMode(PORTB_BASE, 10, kPortMuxAsGpio);
-	PORT_HAL_SetMuxMode(PORTB_BASE, 11, kPortMuxAsGpio);
-
-	setTPS62740CommonControlLines(voltageMillivolts);
-	GPIO_DRV_SetPinOutput(kWarpPinTPS62740_REGCTRL);
-}
-#endif
-
-
-#if (!WARP_BUILD_ENABLE_GLAUX_VARIANT && !WARP_BUILD_ENABLE_FRDMKL03)
-void
-setTPS62740CommonControlLines(uint16_t voltageMillivolts)
-{
-		switch(voltageMillivolts)
-		{
-			case 1800:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 1900:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2000:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2100:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2200:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2300:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2400:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2500:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2600:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2700:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2800:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 2900:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 3000:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 3100:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 3200:
-			{
-				GPIO_DRV_ClearPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			case 3300:
-			{
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL1);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL2);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL3);
-				GPIO_DRV_SetPinOutput(kWarpPinTPS62740_VSEL4);
-
-				break;
-			}
-
-			/*
-			 *	Should never happen, due to previous check in warpScaleSupplyVoltage()
-			 */
-			default:
-			{
-				warpPrint(RTT_CTRL_RESET RTT_CTRL_BG_BRIGHT_YELLOW RTT_CTRL_TEXT_BRIGHT_WHITE kWarpConstantStringErrorSanity RTT_CTRL_RESET "\n");
-			}
-		}
-
-		/*
-		 *	Vload ramp time of the TPS62740 is 800us max (datasheet, Table 8.5 / page 6)
-		 */
-		OSA_TimeDelay(gWarpSupplySettlingDelayMilliseconds);
-}
-#endif
-
-
-
-void
-warpScaleSupplyVoltage(uint16_t voltageMillivolts)
-{
-	if (voltageMillivolts == gWarpCurrentSupplyVoltage)
-	{
-		return;
-	}
-
-	#if (!WARP_BUILD_ENABLE_GLAUX_VARIANT && !WARP_BUILD_ENABLE_FRDMKL03)
-		if (voltageMillivolts >= 1800 && voltageMillivolts <= 3300)
-		{
-			enableTPS62740(voltageMillivolts);
-			gWarpCurrentSupplyVoltage = voltageMillivolts;
-		}
-		else
-		{
-			warpPrint(RTT_CTRL_RESET RTT_CTRL_BG_BRIGHT_RED RTT_CTRL_TEXT_BRIGHT_WHITE kWarpConstantStringErrorInvalidVoltage RTT_CTRL_RESET "\n", voltageMillivolts);
-		}
-	#endif
-}
-
-
-
 void
 warpPrint(const char *fmt, ...)
 {
@@ -708,10 +450,7 @@ int
 main(void)
 {
 	WarpStatus				status;
-	uint8_t					key;
-	WarpSensorDevice			menuTargetSensor		= kWarpSensorBMX055accel;
-	volatile WarpI2CDeviceState *		menuI2cDevice			= NULL;
-	uint8_t					menuRegisterAddress		= 0x00;
+
 	rtc_datetime_t				warpBootDate;
 	power_manager_user_config_t		warpPowerModeWaitConfig;
 	power_manager_user_config_t		warpPowerModeStopConfig;
@@ -941,7 +680,19 @@ main(void)
 					0x01/* Normal read 8bit, 800Hz, normal, active mode */
 					);
 
-	printSensorDataMMA8451Q(false);
+	//printSensorDataMMA8451Q(false);
+
+	//printMMA8451QBuffers();
+
+	uint32_t start_time;
+
+	while(1) {
+		start_time = OSA_TimeGetMsec();
+
+		warpPrint("\n %d \n", start_time);
+
+		OSA_TimeDelay(OSA_TimeGetMsec() - start_time);
+	}
 
 
 
