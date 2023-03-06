@@ -937,6 +937,10 @@ main(void)
 	gWarpBooted = true;
 	warpPrint("Boot done.\n");
 
+	configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
+					0x01/* Normal read 8bit, 800Hz, normal, active mode */
+					);
+
 	printSensorDataMMA8451Q(false);
 
 
