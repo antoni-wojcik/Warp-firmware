@@ -93,6 +93,7 @@ ADD_EXECUTABLE(Warp
     "${ProjDirPath}/../../src/devMMA8451Q.c"
     "${ProjDirPath}/../../src/devSSD1331.c"
     "${ProjDirPath}/../../src/devINA219.c"
+    "${ProjDirPath}/../../src/activity.h"
     "${ProjDirPath}/../../src/SEGGER_RTT.c"
     "${ProjDirPath}/../../src/SEGGER_RTT_printf.c"
     "${ProjDirPath}/../../../../platform/drivers/src/i2c/fsl_i2c_irq.c"

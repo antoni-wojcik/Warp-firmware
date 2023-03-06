@@ -332,6 +332,11 @@ getRegisterValueCombined(WarpSensorOutputRegister address)
 	 */
 	readSensorRegisterValueCombined = (readSensorRegisterValueCombined ^ (1 << 13)) - (1 << 13);
 
+	if (i2cReadStatus != kWarpStatusOK)
+	{
+		warpPrint("ERROR: Could not read MMA8451Q register.\n");
+	}
+
 	return readSensorRegisterValueCombined;
 }
 

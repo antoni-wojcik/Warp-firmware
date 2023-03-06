@@ -67,10 +67,11 @@
 #define							kWarpConstantStringErrorSanity		"\rSanity check failed!"
 
 
-#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
-	#include "devMMA8451Q.h"
-	volatile WarpI2CDeviceState			deviceMMA8451QState;
-#endif
+
+#include "devMMA8451Q.h"
+volatile WarpI2CDeviceState			deviceMMA8451QState;
+
+#include "activity.h"
 
 #if (WARP_BUILD_ENABLE_DEVSSD1331)
 	#include "devSSD1331.h"
