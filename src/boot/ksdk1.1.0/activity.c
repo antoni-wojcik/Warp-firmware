@@ -54,9 +54,9 @@ trackerProcess()
 
     // Variance
 
-    featureBuff[6] = (featureBuff[0] * featureBuff[0] - featureBuff[3]) / (float)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[7] = (featureBuff[1] * featureBuff[1] - featureBuff[4]) / (float)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[8] = (featureBuff[2] * featureBuff[2] - featureBuff[5]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[6] = (featureBuff[3] - featureBuff[0] * featureBuff[0]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[7] = (featureBuff[4] - featureBuff[1] * featureBuff[1]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[8] = (featureBuff[5] - featureBuff[2] * featureBuff[2]) / (float)(TRACKER_NUM_MEASUREMENTS);
 
     // Standard deviation
 
