@@ -90,6 +90,7 @@ volatile lpuart_user_config_t				lpuartUserConfig;
 volatile lpuart_state_t					lpuartState;
 
 
+volatile bool						gWarpBooted				= false;
 volatile uint32_t					gWarpI2cBaudRateKbps			= kWarpDefaultI2cBaudRateKbps;
 volatile uint32_t					gWarpUartBaudRateBps			= kWarpDefaultUartBaudRateBps;
 volatile uint32_t					gWarpSpiBaudRateKbps			= kWarpDefaultSpiBaudRateKbps;
@@ -669,17 +670,18 @@ main(void)
 	#endif
 
 
-	configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
-				0x01/* Normal read 8bit, 800Hz, normal, active mode */
-				);
-
-
 	/*
 	 *	At this point, we consider the system "booted" and, e.g., warpPrint()s
 	 *	will also be sent to the BLE if that is compiled in.
 	 */
 
+	gWarpBooted = true;
 	warpPrint("Boot done.\n");
+
+	
+	configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
+				0x01/* Normal read 8bit, 800Hz, normal, active mode */
+				);
 
 	uint32_t start_time				= 0;
 	uint32_t delay					= 0;
