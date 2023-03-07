@@ -11,6 +11,12 @@
 
 #include "devMMA8451Q.h"
 
+/* Feature buffer: Features are as follows:
+    0-2: mean values along X, Y, Z
+    3-5: standard deviations
+    6-8: variance
+    9:   mean magnitude of acceleration (resultant)
+*/
 volatile float featureBuff[TRACKER_NUM_FEATURES]      = {0};
 
 void
@@ -48,15 +54,15 @@ trackerProcess()
 
     // Variance
 
-    featureBuff[3] = (featureBuff[0] * featureBuff[0] - featureBuff[3]) / (float)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[4] = (featureBuff[1] * featureBuff[1] - featureBuff[4]) / (float)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[5] = (featureBuff[2] * featureBuff[2] - featureBuff[5]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[6] = (featureBuff[0] * featureBuff[0] - featureBuff[3]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[7] = (featureBuff[1] * featureBuff[1] - featureBuff[4]) / (float)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[8] = (featureBuff[2] * featureBuff[2] - featureBuff[5]) / (float)(TRACKER_NUM_MEASUREMENTS);
 
     // Standard deviation
 
-    featureBuff[6] = sqrtf(featureBuff[3]);
-    featureBuff[7] = sqrtf(featureBuff[4]);
-    featureBuff[8] = sqrtf(featureBuff[5]);
+    featureBuff[3] = sqrtf(featureBuff[6]);
+    featureBuff[4] = sqrtf(featureBuff[7]);
+    featureBuff[5] = sqrtf(featureBuff[8]);
 
     // Mean magnitude (resultant) - done already
 }
