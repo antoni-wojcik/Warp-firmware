@@ -64,13 +64,6 @@ extern volatile uint32_t		gWarpI2cTimeoutMilliseconds;
 extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
 
 
-
-#define MMA8451Q_ACC_BUFFER_SIZE 200 // 20 Hz for 10s = 200 measurements
-#define MMA8451Q_ACC_NUM_FEATURES 16 
-
-volatile float featureBuff[MMA8451Q_ACC_NUM_FEATURES];
-
-
 void
 initMMA8451Q(const uint8_t i2cAddress, uint16_t operatingVoltageMillivolts)
 {
@@ -338,21 +331,4 @@ getRegisterValueCombined(WarpSensorOutputRegister address)
 	}
 
 	return readSensorRegisterValueCombined;
-}
-
-void
-printMMA8451QBuffers()
-{
-	int16_t accX;
-	int16_t accY;
-	int16_t accZ;
-
-	for(uint8_t i = 0; i < MMA8451Q_ACC_BUFFER_SIZE; i++)
-	{
-		accX = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
-		accY = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
-		accZ = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
-
-		warpPrint("%d: %d, %d, %d\n", i, accX, accY, accZ);
-	}
 }

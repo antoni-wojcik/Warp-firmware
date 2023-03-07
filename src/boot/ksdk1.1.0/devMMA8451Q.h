@@ -43,4 +43,4 @@ WarpStatus	writeSensorRegisterMMA8451Q(uint8_t deviceRegister,
 WarpStatus	configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1);
 void		printSensorDataMMA8451Q(bool hexModeFlag);
 
-void printMMA8451QBuffers();
+int16_t		getRegisterValueCombined(WarpSensorOutputRegister address);

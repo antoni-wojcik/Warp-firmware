@@ -669,6 +669,11 @@ main(void)
 	#endif
 
 
+	configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
+				0x01/* Normal read 8bit, 800Hz, normal, active mode */
+				);
+
+
 	/*
 	 *	At this point, we consider the system "booted" and, e.g., warpPrint()s
 	 *	will also be sent to the BLE if that is compiled in.
@@ -676,22 +681,37 @@ main(void)
 
 	warpPrint("Boot done.\n");
 
-	configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
-					0x01/* Normal read 8bit, 800Hz, normal, active mode */
-					);
+	uint32_t start_time				= 0;
+	uint32_t delay					= 0;
+	uint16_t frame_count			= 0;
 
-	//printSensorDataMMA8451Q(false);
-
-	//printMMA8451QBuffers();
-
-	uint32_t start_time;
 
 	while(1) {
 		start_time = OSA_TimeGetMsec();
 
-		warpPrint("\n %d \n", start_time);
+		warpPrint("Taking measurement: %d\n", frame_count);
 
-		OSA_TimeDelay(OSA_TimeGetMsec() - start_time);
+		trackerUpdate();
+		
+		frame_count++;
+
+		if(frame_count == TRACKER_NUM_MEASUREMENTS)
+		{
+			trackerProcess();
+
+			trackerClassify();
+
+			trackerClearFeatures();
+
+			frame_count = 0;
+		}
+
+		delay = OSA_TimeGetMsec() - start_time;
+
+		if(delay < TRACKER_REFRESH_RATE_MS)
+		{
+			OSA_TimeDelay(TRACKER_REFRESH_RATE_MS - delay);
+		}
 	}
 
 
