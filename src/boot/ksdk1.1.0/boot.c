@@ -691,7 +691,7 @@ main(void)
 	while(1) {
 		start_time = OSA_TimeGetMsec();
 
-		warpPrint("Taking measurement: %d\n", frame_count);
+		//warpPrint("Taking measurement: %d\n", frame_count);
 
 		trackerUpdate();
 		
