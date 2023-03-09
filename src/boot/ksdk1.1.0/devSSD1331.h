@@ -42,4 +42,12 @@ typedef enum
 	kSSD1331CommandVCOMH		= 0xBE,
 } SSD1331Commands;
 
+typedef enum {
+	kSSD1331ColorWHITE = 0xFFFFFF,
+	kSSD1331ColorRED   = 0xFF0000,
+	kSSD1331ColorGREEN = 0x00FF00,
+	kSSD1331ColorBLUE  = 0x0000FF,
+	kSSD1331ColorBLACK = 0x000000,
+} SSD1331Colors;
+
 int	devSSD1331init(void);

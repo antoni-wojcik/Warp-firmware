@@ -13,6 +13,9 @@
 #include "warp.h"
 #include "devSSD1331.h"
 
+#define CHAR_WIDTH	 7
+#define CHAR_HEIGHT  9
+
 volatile uint8_t	inBuffer[32];
 volatile uint8_t	payloadBytes[32];
 
@@ -64,7 +67,226 @@ writeCommand(uint8_t commandByte)
 	return status;
 }
 
+void
+clearScreen()
+{
+	writeCommand(kSSD1331CommandCLEAR);
+	writeCommand(0x00);
+    writeCommand(0x00);
+    writeCommand(0x5F);
+    writeCommand(0x3F);
+}
 
+void
+clearRegion(uint8_t s_x, uint8_t s_y, uint8_t w, uint8_t h)
+{
+	writeCommand(kSSD1331CommandCLEAR);
+	writeCommand(s_x);
+    writeCommand(s_y);
+    writeCommand(s_x + w);
+    writeCommand(s_y + h);
+}
+
+void
+drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_t g_y, SSD1331Colors color)
+{
+	uint8_t col_r = (color >> 16) & 0xFF;
+	uint8_t col_g = (color >>  8) & 0xFF;
+	uint8_t col_b = (color      ) & 0xFF;
+
+	writeCommand(kSSD1331CommandDRAWLINE);
+	writeCommand(g_x + s_x);
+    writeCommand(g_y + s_y);
+    writeCommand(g_x + e_x);
+    writeCommand(g_y + e_y);
+    writeCommand(col_r);
+    writeCommand(col_g);
+    writeCommand(col_b);
+}
+
+/* 7 x 9 characters */
+void
+printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
+{
+	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+
+	switch(digit)
+	{
+		case 0:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 1:
+		{
+			drawLine(3, 0, 3, 8, x, y, color);
+		}
+		case 2:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 0, 6, 4, x, y, color);
+			drawLine(6, 4, 0, 4, x, y, color);
+			drawLine(0, 4, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 3:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 4:
+		{
+			drawLine(0, 0, 0, 4, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 5:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 4, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(6, 4, 6, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 6:
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 4, 6, 8, x, y, color);
+			drawLine(6, 4, 0, 4, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 7:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 8:
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+		}
+		case 9:
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(6, 4, 0, 4, x, y, color);
+			drawLine(0, 0, 0, 4, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+	}
+}
+
+/* 7 x 9 characters */
+void
+printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
+{
+	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+
+	switch(character)
+	{
+		case 'a':
+		case 'A':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'b':
+		case 'B':
+		{
+        	drawLine(0, 0, 4, 0, x, y, color);
+        	drawLine(4, 0, 4, 3, x, y, color);
+        	drawLine(0, 0, 0, 8, x, y, color);
+        	drawLine(0, 3, 6, 3, x, y, color);
+        	drawLine(6, 3, 6, 8, x, y, color);
+        	drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 'c':
+		case 'C':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+		}
+		case 'd':
+		case 'D':
+		{
+			drawLine(0, 0, 5, 0, x, y, color);
+			drawLine(0, 8, 5, 8, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 1, 6, 7, x, y, color);
+		}
+		case 'e':
+		case 'E':
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(0, 4, 4, 4, x, y, color);
+		}
+		case 'f':
+		case 'F':
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 4, 4, 4, x, y, color);
+		}		
+		case 'g':
+		case 'G':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(6, 4, 6, 8, x, y, color);
+			drawLine(3, 4, 6, 4, x, y, color);
+		}
+		case 'h':
+		case 'H':
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'i':
+		case 'I':
+		{
+			drawLine(3, 0, 3, 8, x, y, color);
+		}
+		case 'j':
+		case 'J':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 5, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+	}
+}
+
+void
+drawRect()
+{
+	writeCommand(kSSD1331CommandDRAWRECT);
+	writeCommand(0x00); // set column address of start
+	writeCommand(0x00); // set row address of start
+	writeCommand(0x5F); // set column address of end
+	writeCommand(0x3F); // set row address of end
+	writeCommand(0x00); // R intensity - outline
+	writeCommand(0xFF); // G intensity - outline
+	writeCommand(0x00); // B intensity - outline
+	writeCommand(0x00); // R intensity - fill
+	writeCommand(0xFF); // G intensity - fill
+	writeCommand(0x00); // B intensity - fill
+}
 
 int
 devSSD1331init(void)
@@ -99,7 +321,7 @@ devSSD1331init(void)
 	GPIO_DRV_SetPinOutput(kSSD1331PinRST);
 	OSA_TimeDelay(100);
 
-	/*
+		/*
 	 *	Initialization sequence, borrowed from https://github.com/adafruit/Adafruit-SSD1331-OLED-Driver-Library-for-Arduino
 	 */
 	writeCommand(kSSD1331CommandDISPLAYOFF);	// 0xAE
@@ -121,23 +343,23 @@ devSSD1331init(void)
 	writeCommand(kSSD1331CommandCLOCKDIV);		// 0xB3
 	writeCommand(0xF0);				// 7:4 = Oscillator Frequency, 3:0 = CLK Div Ratio (A[3:0]+1 = 1..16)
 	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8A
-	writeCommand(0x00);
+	writeCommand(0x64);
 	writeCommand(kSSD1331CommandPRECHARGEB);	// 0x8B
-	writeCommand(0xFF);
+	writeCommand(0x78);
 	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8C
-	writeCommand(0x00);
+	writeCommand(0x64);
 	writeCommand(kSSD1331CommandPRECHARGELEVEL);	// 0xBB
 	writeCommand(0x3A);
 	writeCommand(kSSD1331CommandVCOMH);		// 0xBE
 	writeCommand(0x3E);
 	writeCommand(kSSD1331CommandMASTERCURRENT);	// 0x87
-	writeCommand(0xFF);
+	writeCommand(0x06);
 	writeCommand(kSSD1331CommandCONTRASTA);		// 0x81
-	writeCommand(0x00);
+	writeCommand(0x91);
 	writeCommand(kSSD1331CommandCONTRASTB);		// 0x82
-	writeCommand(0xFF);
+	writeCommand(0x50);
 	writeCommand(kSSD1331CommandCONTRASTC);		// 0x83
-	writeCommand(0x00);
+	writeCommand(0x7D);
 	writeCommand(kSSD1331CommandDISPLAYON);		// Turn on oled panel
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with initialization sequence...\n");
 
@@ -151,27 +373,14 @@ devSSD1331init(void)
 	/*
 	 *	Clear Screen
 	 */
-	writeCommand(kSSD1331CommandCLEAR);
-	writeCommand(0x00);
-	writeCommand(0x00);
-	writeCommand(0x5F);
-	writeCommand(0x3F);
-//	SEGGER_RTT_WriteString(0, "\r\n\tDone with screen clear...\n");
+	clearScreen();
 
-	/*
-	 *	Draw rectangle. It will be filled because the fill setting was enabled.
-	 */
-	writeCommand(kSSD1331CommandDRAWRECT);
-	writeCommand(0x00); // set column address of start
-	writeCommand(0x00); // set row address of start
-	writeCommand(0x5F); // set column address of end
-	writeCommand(0x3F); // set row address of end
-	writeCommand(0x00); // R intensity - outline
-	writeCommand(0xFF); // G intensity - outline
-	writeCommand(0x00); // B intensity - outline
-	writeCommand(0x00); // R intensity - fill
-	writeCommand(0xFF); // G intensity - fill
-	writeCommand(0x00); // B intensity - fill
+	for(int i = 5; i <= 5; i++) {
+		printDigit(i, i * (CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
+		OSA_TimeDelay(5);
+	}
+
+	
 
 
 //	SEGGER_RTT_WriteString(0, "\r\n\tDone with draw rectangle...\n");
