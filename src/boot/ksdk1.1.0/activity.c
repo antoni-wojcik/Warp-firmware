@@ -10,6 +10,7 @@
 #include "activity.h"
 
 #include "devMMA8451Q.h"
+#include "devSSD1331.h"
 
 #define REG_VAL_TYPE    double
 
@@ -53,15 +54,18 @@ getClass() {
 
     double prob_sum = 0.0;
 
-    for(int j = 0; j < TRACKER_NUM_CLASSES; j++)
+    double max_prob = 0.0;
+    uint8_t class_max_prob = 0;
+
+    for(uint8_t j = 0; j < TRACKER_NUM_CLASSES; j++)
     {
         prob_class[j] = 1.0;
 
-        for(int i = 0; i < TRACKER_NUM_FEATURES; i++)
+        for(uint8_t i = 0; i < TRACKER_NUM_FEATURES; i++)
         {
             double prob_feature = gaussian(featureBuff[i], mean[j * TRACKER_NUM_FEATURES + i], std[j * TRACKER_NUM_FEATURES + i]);
 
-            warpPrint("Prob feature %d, classm %d: %de-3\n", i, j, (uint32_t)(prob_feature * 1000.0));
+            // warpPrint("Prob feature %d, classm %d: %de-3\n", i, j, (uint32_t)(prob_feature * 1000.0));
 
             prob_class[j] *= prob_feature;
         }
@@ -69,11 +73,42 @@ getClass() {
         prob_sum += prob_class[j];
     }
 
-    for(int j = 0; j < TRACKER_NUM_CLASSES; j++)
+    for(uint8_t j = 0; j < TRACKER_NUM_CLASSES; j++)
     {
         prob_class[j] /= prob_sum;
 
         warpPrint("Classification %d prob: %de-3\n", j, (uint32_t)(prob_class[j] * 1000.0));
+
+        if(prob_class[j] > max_prob)
+        {
+            max_prob = prob_class[j];
+            
+            class_max_prob = j;
+        }
+    }
+
+    switch(class_max_prob)
+    { 
+        uint8_t x_offset = 0;
+
+        case 0:
+        {
+            x_offset = drawText("Walking:", 8, 0, 0, kSSD1331ColorWHITE);
+            break;
+        }
+        case 1:
+        {
+            x_offset = drawText("Jogging:", 8, 0, 0, kSSD1331ColorWHITE);
+            break;
+        }
+        case 2:
+        {
+            x_offset = drawText("Idle:", 5, 0, 0, kSSD1331ColorWHITE);
+            break;
+        }
+
+
+        drawProb(max_prob, x_offset, 0, kSSD1331ColorWHITE);
     }
 }
 
@@ -83,7 +118,7 @@ trackerUpdate()
 {
     REG_VAL_TYPE accSqMag = 0.0;
 
-    for(int i = 0; i < TRACKER_NUM_AXES; i++) 
+    for(uint8_t i = 0; i < TRACKER_NUM_AXES; i++) 
     {
         int16_t acc_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB + i * 2);
 
@@ -112,7 +147,7 @@ trackerUpdate()
 void
 trackerProcess()
 {
-    for(int i = 0; i < TRACKER_NUM_AXES; i++) 
+    for(uint8_t i = 0; i < TRACKER_NUM_AXES; i++) 
     {
         // Variance
 
@@ -130,7 +165,7 @@ trackerProcess()
 void
 trackerClassify()
 {
-    for(int i = 0; i < TRACKER_NUM_FEATURES; i++)
+    for(uint8_t i = 0; i < TRACKER_NUM_FEATURES; i++)
     {
         warpPrint("Feature %d: %de-3\n", i, (uint32_t)(featureBuff[i] * 1000.0));
     }
@@ -141,12 +176,12 @@ trackerClassify()
 void
 trackerClearFeatures()
 {
-    for(int i = 0; i < TRACKER_NUM_FEATURES; i++)
+    for(uint8_t i = 0; i < TRACKER_NUM_FEATURES; i++)
     {
         featureBuff[i] = 0.0f;
     }
 
-    for(int i = 0; i < TRACKER_NUM_AXES; i++)
+    for(uint8_t i = 0; i < TRACKER_NUM_AXES; i++)
     {
         meanAcc[i]   = 0.0;
         meanAccSq[i] = 0.0;

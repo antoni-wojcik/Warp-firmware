@@ -13,9 +13,6 @@
 #include "warp.h"
 #include "devSSD1331.h"
 
-#define CHAR_WIDTH	 7
-#define CHAR_HEIGHT  9
-
 volatile uint8_t	inBuffer[32];
 volatile uint8_t	payloadBytes[32];
 
@@ -108,7 +105,7 @@ drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_
 void
 drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 {
-	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+	clearRegion(x, y, SSD1331_CHAR_WIDTH - 1, SSD1331_CHAR_HEIGHT - 1);
 
 	switch(digit)
 	{
@@ -203,7 +200,7 @@ drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 void
 drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 {
-	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+	//clearRegion(x, y, SSD1331_CHAR_WIDTH - 1, SSD1331_CHAR_HEIGHT - 1);
 
 	switch(character)
 	{
@@ -466,7 +463,7 @@ drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors col
 			}
 			default:
 			{
-				x_offset += CHAR_WIDTH + 1;
+				x_offset += SSD1331_CHAR_WIDTH + 1;
 			}
 		}
 	}
@@ -497,13 +494,13 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 
 		drawDigit(digit, x + x_offset, y, color);
 
-		x_offset += CHAR_WIDTH + 1;
+		x_offset += SSD1331_CHAR_WIDTH + 1;
 
 	}
 
 	drawChar('%', x + x_offset, y, color);
 
-	x_offset += CHAR_WIDTH + 1;
+	x_offset += SSD1331_CHAR_WIDTH + 1;
 
 	return x_offset;
 }
@@ -611,10 +608,10 @@ devSSD1331init(void)
 	 */
 	clearScreen();
 
-	drawRect();
+	// drawRect();
 
 	/*for(int i = 0; i <= 9; i++) {
-		drawDigit(i, i * (CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
+		drawDigit(i, i * (SSD1331_CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
 	}*/
 
 	
