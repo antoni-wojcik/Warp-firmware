@@ -21,7 +21,10 @@
     6-8: variance
     9:   mean magnitude of acceleration (resultant)
 */
-volatile REG_VAL_TYPE featureBuff[TRACKER_NUM_FEATURES]      = {0};
+volatile REG_VAL_TYPE featureBuff[TRACKER_NUM_FEATURES]  = {0};
+
+static REG_VAL_TYPE meanAcc[TRACKER_NUM_AXES]     = {0};
+static REG_VAL_TYPE meanAccSq[TRACKER_NUM_AXES]   = {0};
 
 void
 warpPrintDoubleVec(double x, double y, double z) {
@@ -38,10 +41,13 @@ gaussian(double x, double mean, double std) {
 
 void
 getClass() {
-    const double mean[TRACKER_NUM_FEATURES * TRACKER_NUM_CLASSES] =   {13.42378107, 
-                                                 9.76847904};
-    const double std[TRACKER_NUM_FEATURES * TRACKER_NUM_CLASSES]  =    {3.30213513, 
-                                                 0.21466643};
+    const double mean[TRACKER_NUM_FEATURES * TRACKER_NUM_CLASSES] = {0.25307806, 0.21680997, 0.18862757, 11.483962,
+                                                                     0.60996965, 0.7063934,  0.41486924, 15.43389935,
+                                                                     0.0419608,  0.04912008, 0.04823104, 9.76847904};
+
+    const double std[TRACKER_NUM_FEATURES * TRACKER_NUM_CLASSES]  = {0.1172738,  0.11280127, 0.14980334, 1.2231232,
+                                                                     0.14828773, 0.17132559, 0.20834945, 3.56556733,
+                                                                     0.07756477, 0.07896084, 0.0804943,  0.21466643};
 
     double prob_class[TRACKER_NUM_CLASSES];
 
@@ -75,55 +81,47 @@ getClass() {
 void
 trackerUpdate()
 {
-    int16_t accX_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB);
-	int16_t accY_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB);
-	int16_t accZ_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB);
+    REG_VAL_TYPE accSqMag = 0.0;
 
-    REG_VAL_TYPE accX = (REG_VAL_TYPE)(accX_i) * G_VAL / 4096.0;
-    REG_VAL_TYPE accY = (REG_VAL_TYPE)(accY_i) * G_VAL / 4096.0;
-    REG_VAL_TYPE accZ = (REG_VAL_TYPE)(accZ_i) * G_VAL / 4096.0;
+    for(int i = 0; i < TRACKER_NUM_AXES; i++) 
+    {
+        int16_t acc_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB + i * 2);
 
-    //warpPrintDoubleVec(accX, accY, accZ);
+        REG_VAL_TYPE acc = (REG_VAL_TYPE)(acc_i) * G_VAL / 4096.0;
 
-    // Mean values
+        // Mean values
 
-    /*featureBuff[0] += accX / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[1] += accY / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[2] += accZ / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);*/
+        meanAcc[i] += acc / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
 
-    // Mean of squares of values
+        // Mean of squares of values
 
-    REG_VAL_TYPE accX2 = accX * accX;
-    REG_VAL_TYPE accY2 = accY * accY;
-    REG_VAL_TYPE accZ2 = accZ * accZ;
+        REG_VAL_TYPE accSq = acc * acc;
 
-    //warpPrintDoubleVec(accX2, accY2, accZ2);
+        //warpPrintDoubleVec(accX2, accY2, accZ2);
 
-    /*featureBuff[3] += accX2 / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[4] += accY2 / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[5] += accZ2 / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);*/
+        meanAccSq[i] += accSq / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
+
+        accSqMag += accSq;
+    }
 
     // Mean magnitude
 
-    featureBuff[0] += sqrt(accX2 + accY2 + accZ2) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
+    featureBuff[3] += sqrt(accSqMag) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
 }
 
 void
 trackerProcess()
 {
-    // Mean values - done already
+    for(int i = 0; i < TRACKER_NUM_AXES; i++) 
+    {
+        // Variance
 
-    // Variance
+        REG_VAL_TYPE var = (meanAccSq[i] - meanAcc[i] * meanAcc[i]) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
 
-    /*featureBuff[6] = (featureBuff[3] - featureBuff[0] * featureBuff[0]) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[7] = (featureBuff[4] - featureBuff[1] * featureBuff[1]) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
-    featureBuff[8] = (featureBuff[5] - featureBuff[2] * featureBuff[2]) / (REG_VAL_TYPE)(TRACKER_NUM_MEASUREMENTS);
+        // Standard deviation
 
-    // Standard deviation
-
-    featureBuff[3] = sqrt(featureBuff[6]);
-    featureBuff[4] = sqrt(featureBuff[7]);
-    featureBuff[5] = sqrt(featureBuff[8]);*/
+        featureBuff[i] = sqrt(var);
+    }
 
     // Mean magnitude (resultant) - done already
 
@@ -146,5 +144,11 @@ trackerClearFeatures()
     for(int i = 0; i < TRACKER_NUM_FEATURES; i++)
     {
         featureBuff[i] = 0.0f;
+    }
+
+    for(int i = 0; i < TRACKER_NUM_AXES; i++)
+    {
+        meanAcc[i]   = 0.0;
+        meanAccSq[i] = 0.0;
     }
 }
