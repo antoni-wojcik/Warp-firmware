@@ -118,6 +118,7 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(0, 0, 6, 8, x, y, color);
 		}
 		case 1:
 		{
@@ -265,9 +266,120 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 		case 'J':
 		{
 			drawLine(0, 0, 6, 0, x, y, color);
-			drawLine(0, 5, 0, 8, x, y, color);
+			drawLine(0, 6, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'k':
+		case 'K':
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(1, 4, 6, 0, x, y, color);
+			drawLine(1, 4, 6, 8, x, y, color);
+		}
+		case 'l':
+		case 'L':
+		{
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 'm':
+		case 'M':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(3, 0, 3, 8, x, y, color);
+		}
+		case 'n':
+		case 'N':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'o':
+		case 'O':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'p':
+		case 'P':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 4, 0, 4, x, y, color);
+			drawLine(6, 0, 6, 4, x, y, color);
+		}
+		case 'q':
+		case 'Q':
+		{
+			drawLine(0, 0, 5, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(5, 0, 5, 8, x, y, color);
+		}
+		case 'r':
+		case 'R':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 4, 0, 4, x, y, color);
+			drawLine(6, 0, 6, 4, x, y, color);
+			drawLine(1, 5, 6, 8, x, y, color);
+		}
+		case 's':
+		case 'S':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(0, 0, 0, 4, x, y, color);
+			drawLine(0, 4, 6, 4, x, y, color);
+			drawLine(6, 4, 6, 8, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
+		}
+		case 't':
+		case 'T':
+		{
+			drawLine(3, 0, 3, 8, x, y, color);
+			drawLine(0, 0, 6, 0, x, y, color);
+		}
+		case 'u':
+		case 'U':
+		{
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+		}
+		case 'w':
+		case 'W':
+		{
+			drawLine(0, 8, 6, 8, x, y, color);
+			drawLine(0, 0, 0, 8, x, y, color);
+			drawLine(6, 0, 6, 8, x, y, color);
+			drawLine(3, 0, 3, 8, x, y, color);
+		}
+		case 'x':
+		case 'X':
+		{
+			drawLine(0, 0, 6, 8, x, y, color);
+			drawLine(6, 0, 0, 8, x, y, color);
+		}
+		case 'y':
+		case 'Y':
+		{
+			drawLine(0, 0, 3, 5, x, y, color);
+			drawLine(6, 0, 3, 5, x, y, color);
+			drawLine(3, 5, 3, 8, x, y, color);
+		}
+		case 'z':
+		case 'Z':
+		{
+			drawLine(0, 0, 6, 0, x, y, color);
+			drawLine(6, 1, 0, 7, x, y, color);
+			drawLine(0, 8, 6, 8, x, y, color);
 		}
 	}
 }
