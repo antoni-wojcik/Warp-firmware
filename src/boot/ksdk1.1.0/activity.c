@@ -87,10 +87,10 @@ getClass() {
         }
     }
 
-    switch(class_max_prob)
-    { 
-        uint8_t x_offset = 0;
+    uint8_t x_offset = 0;
 
+    switch(class_max_prob)
+    {
         case 0:
         {
             x_offset = drawText("Walking:", 8, 0, 0, kSSD1331ColorWHITE);
@@ -106,10 +106,11 @@ getClass() {
             x_offset = drawText("Idle:", 5, 0, 0, kSSD1331ColorWHITE);
             break;
         }
-
-
-        drawProb(max_prob, x_offset, 0, kSSD1331ColorWHITE);
     }
+    
+    x_offset += drawProb(max_prob, x_offset, 0, kSSD1331ColorWHITE);
+
+    warpPrint("X-offset = %d\n", x_offset);
 }
 
 
