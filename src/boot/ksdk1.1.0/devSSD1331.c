@@ -68,7 +68,7 @@ writeCommand(uint8_t commandByte)
 }
 
 void
-clearScreen()
+clearScreen(void)
 {
 	writeCommand(kSSD1331CommandCLEAR);
 	writeCommand(0x00);
@@ -108,7 +108,7 @@ drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_
 void
 drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 {
-	clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
 
 	switch(digit)
 	{
@@ -509,7 +509,7 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 }
 
 void
-drawRect()
+drawRect(void)
 {
 	writeCommand(kSSD1331CommandDRAWRECT);
 	writeCommand(0x00); // set column address of start
@@ -611,10 +611,11 @@ devSSD1331init(void)
 	 */
 	clearScreen();
 
-	for(int i = 0; i <= 0; i++) {
+	drawRect();
+
+	/*for(int i = 0; i <= 9; i++) {
 		drawDigit(i, i * (CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
-		OSA_TimeDelay(5);
-	}
+	}*/
 
 	
 

@@ -2,6 +2,8 @@
  *	See https://github.com/adafruit/Adafruit-SSD1331-OLED-Driver-Library-for-Arduino for the Arduino driver.
  */
 
+#include <stdint.h>
+
 typedef enum
 {
 	kSSD1331ColororderRGB		= 1,
@@ -51,3 +53,11 @@ typedef enum {
 } SSD1331Colors;
 
 int	devSSD1331init(void);
+
+void clearScreen(void);
+void drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_t g_y, SSD1331Colors color);
+void clearRegion(uint8_t s_x, uint8_t s_y, uint8_t w, uint8_t h);
+void drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color);
+void drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color);
+uint8_t drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors color);
+uint8_t drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color);
