@@ -106,9 +106,9 @@ drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_
 
 /* 7 x 9 characters */
 void
-printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
+drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 {
-	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
+	clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
 
 	switch(digit)
 	{
@@ -119,10 +119,12 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
 			drawLine(0, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 1:
 		{
 			drawLine(3, 0, 3, 8, x, y, color);
+			break;
 		}
 		case 2:
 		{
@@ -131,6 +133,7 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 4, 0, 4, x, y, color);
 			drawLine(0, 4, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 3:
 		{
@@ -138,12 +141,14 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 0, 6, 8, x, y, color);
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 4:
 		{
 			drawLine(0, 0, 0, 4, x, y, color);
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 5:
 		{
@@ -152,6 +157,7 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(6, 4, 6, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 6:
 		{
@@ -160,11 +166,13 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 4, 6, 8, x, y, color);
 			drawLine(6, 4, 0, 4, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 7:
 		{
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 8:
 		{
@@ -173,6 +181,7 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 0, 6, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(0, 4, 6, 4, x, y, color);
+			break;
 		}
 		case 9:
 		{
@@ -181,13 +190,18 @@ printDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 4, 0, 4, x, y, color);
 			drawLine(0, 0, 0, 4, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
+		}
+		default:
+		{
+			warpPrint("ERROR: SSD1331: drawDigit");
 		}
 	}
 }
 
 /* 7 x 9 characters */
 void
-printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
+drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 {
 	//clearRegion(x, y, CHAR_WIDTH - 1, CHAR_HEIGHT - 1);
 
@@ -200,6 +214,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'b':
 		case 'B':
@@ -210,6 +225,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
         	drawLine(0, 3, 6, 3, x, y, color);
         	drawLine(6, 3, 6, 8, x, y, color);
         	drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 'c':
 		case 'C':
@@ -217,6 +233,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(0, 0, 0, 8, x, y, color);
+			break;
 		}
 		case 'd':
 		case 'D':
@@ -225,6 +242,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 8, 5, 8, x, y, color);
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 1, 6, 7, x, y, color);
+			break;
 		}
 		case 'e':
 		case 'E':
@@ -233,6 +251,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(0, 4, 4, 4, x, y, color);
+			break;
 		}
 		case 'f':
 		case 'F':
@@ -240,6 +259,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(0, 4, 4, 4, x, y, color);
+			break;
 		}		
 		case 'g':
 		case 'G':
@@ -249,6 +269,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 4, 6, 8, x, y, color);
 			drawLine(3, 4, 6, 4, x, y, color);
+			break;
 		}
 		case 'h':
 		case 'H':
@@ -256,11 +277,13 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'i':
 		case 'I':
 		{
 			drawLine(3, 0, 3, 8, x, y, color);
+			break;
 		}
 		case 'j':
 		case 'J':
@@ -269,6 +292,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 6, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'k':
 		case 'K':
@@ -276,12 +300,14 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(1, 4, 6, 0, x, y, color);
 			drawLine(1, 4, 6, 8, x, y, color);
+			break;
 		}
 		case 'l':
 		case 'L':
 		{
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 'm':
 		case 'M':
@@ -290,6 +316,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
 			drawLine(3, 0, 3, 8, x, y, color);
+			break;
 		}
 		case 'n':
 		case 'N':
@@ -297,6 +324,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'o':
 		case 'O':
@@ -305,6 +333,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'p':
 		case 'P':
@@ -313,6 +342,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 4, 0, 4, x, y, color);
 			drawLine(6, 0, 6, 4, x, y, color);
+			break;
 		}
 		case 'q':
 		case 'Q':
@@ -321,6 +351,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(5, 0, 5, 8, x, y, color);
+			break;
 		}
 		case 'r':
 		case 'R':
@@ -330,6 +361,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(6, 4, 0, 4, x, y, color);
 			drawLine(6, 0, 6, 4, x, y, color);
 			drawLine(1, 5, 6, 8, x, y, color);
+			break;
 		}
 		case 's':
 		case 'S':
@@ -339,12 +371,14 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 4, 6, 4, x, y, color);
 			drawLine(6, 4, 6, 8, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
 		}
 		case 't':
 		case 'T':
 		{
 			drawLine(3, 0, 3, 8, x, y, color);
 			drawLine(0, 0, 6, 0, x, y, color);
+			break;
 		}
 		case 'u':
 		case 'U':
@@ -352,6 +386,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 8, 6, 8, x, y, color);
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
+			break;
 		}
 		case 'w':
 		case 'W':
@@ -360,12 +395,14 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 0, 8, x, y, color);
 			drawLine(6, 0, 6, 8, x, y, color);
 			drawLine(3, 0, 3, 8, x, y, color);
+			break;
 		}
 		case 'x':
 		case 'X':
 		{
 			drawLine(0, 0, 6, 8, x, y, color);
 			drawLine(6, 0, 0, 8, x, y, color);
+			break;
 		}
 		case 'y':
 		case 'Y':
@@ -373,6 +410,7 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 3, 5, x, y, color);
 			drawLine(6, 0, 3, 5, x, y, color);
 			drawLine(3, 5, 3, 8, x, y, color);
+			break;
 		}
 		case 'z':
 		case 'Z':
@@ -380,8 +418,94 @@ printChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 			drawLine(0, 0, 6, 0, x, y, color);
 			drawLine(6, 1, 0, 7, x, y, color);
 			drawLine(0, 8, 6, 8, x, y, color);
+			break;
+		}
+		case '.':
+		{
+			drawLine(0, 8, 0, 8, x, y, color);
+		}
+		case ':':
+		{
+			drawLine(0, 3, 0, 3, x, y, color);
+			drawLine(0, 5, 0, 5, x, y, color);
+			break;
+		}
+		case '%':
+		{
+			drawLine(0, 0, 0, 0, x, y, color);
+			drawLine(0, 0, 6, 8, x, y, color);
+			drawLine(6, 0, 0, 8, x, y, color);
+			break;
+		}
+		case ' ':
+		{
+			break;
+		}
+		default:
+		{
+			warpPrint("ERROR: SSD1331: drawChar");
 		}
 	}
+}
+
+uint8_t
+drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors color)
+{
+	uint8_t x_offset = 0;
+
+	for(uint8_t i = 0; i < size; i++)
+	{
+		drawChar(text[i], x + x_offset, y, color);
+
+		switch(text[i])
+		{
+			case '.':
+			case ':':
+			{
+				x_offset += 2;
+			}
+			default:
+			{
+				x_offset += CHAR_WIDTH + 1;
+			}
+		}
+	}
+
+	return x_offset;
+}
+
+// draw porbabilty with the given precision. Assume prob <= 1
+uint8_t
+drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
+{
+	uint8_t x_offset = 0;
+
+	uint8_t precision = 3;
+
+	uint8_t digit;
+
+	for(uint8_t i = 0; i < precision; i++)
+	{
+		digit = (uint8_t)(prob) % 10;
+
+		prob *= 10.0;
+
+		if(i == 0 && digit != 1)
+		{
+			continue;
+		}
+
+		drawDigit(digit, x + x_offset, y, color);
+
+		x_offset += CHAR_WIDTH + 1;
+
+	}
+
+	drawChar('%', x + x_offset, y, color);
+
+	x_offset += CHAR_WIDTH + 1;
+
+	return x_offset;
 }
 
 void
@@ -487,8 +611,8 @@ devSSD1331init(void)
 	 */
 	clearScreen();
 
-	for(int i = 5; i <= 5; i++) {
-		printDigit(i, i * (CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
+	for(int i = 0; i <= 0; i++) {
+		drawDigit(i, i * (CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
 		OSA_TimeDelay(5);
 	}
 
