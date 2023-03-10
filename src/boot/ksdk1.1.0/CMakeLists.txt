@@ -34,7 +34,7 @@ SET(CMAKE_ASM_FLAGS_DEBUG "${CMAKE_ASM_FLAGS_DEBUG} -g  -mcpu=cortex-m0plus  -mt
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g  -mcpu=cortex-m0plus  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mapcs  -std=gnu99 -fshort-enums")
 
 # DEBUG LD FLAGS
-SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g  --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs  -Xlinker --defsym=__stack_size__=0x300  -Xlinker --defsym=__heap_size__=0x0")
+SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -g  --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs  -Xlinker --defsym=__stack_size__=0x200  -Xlinker --defsym=__heap_size__=0x0")
 
 # RELEASE ASM FLAGS
 SET(CMAKE_ASM_FLAGS_RELEASE "${CMAKE_ASM_FLAGS_RELEASE} -mcpu=cortex-m0plus  -mthumb  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mapcs  -std=gnu99")
@@ -43,7 +43,7 @@ SET(CMAKE_ASM_FLAGS_RELEASE "${CMAKE_ASM_FLAGS_RELEASE} -mcpu=cortex-m0plus  -mt
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -mcpu=cortex-m0plus  -mthumb  -MMD  -MP  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mapcs  -std=gnu99 -fshort-enums")
 
 # RELEASE LD FLAGS
-SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs  -Xlinker --defsym=__stack_size__=0x300  -Xlinker --defsym=__heap_size__=0x0")
+SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} --specs=nano.specs  -lm  -Wall  -fno-common  -ffunction-sections  -fdata-sections  -ffreestanding  -fno-builtin  -Os  -mthumb  -mapcs  -Xlinker --gc-sections  -Xlinker -static  -Xlinker -z  -Xlinker muldefs  -Xlinker --defsym=__stack_size__=0x200  -Xlinker --defsym=__heap_size__=0x0")
 
 # ASM MACRO
 SET(CMAKE_ASM_FLAGS_DEBUG "${CMAKE_ASM_FLAGS_DEBUG}  -DDEBUG")
@@ -53,12 +53,10 @@ SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -DDEBUG")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -DCPU_MKL03Z32VFK4")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -DFRDM_KL03Z48M")
 SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -DFREEDOM")
-SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}  -DWARP_BUILD_ENABLE_GLAUX_VARIANT")
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -DNDEBUG")
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -DCPU_MKL03Z32VFK4")
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -DFRDM_KL03Z48M")
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -DFREEDOM")
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -DWARP_BUILD_ENABLE_GLAUX_VARIANT")
 
 # CXX MACRO
 
@@ -72,7 +70,7 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/hal/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/system/inc)
-    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../boards/Glaux)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../boards/Warp)
 ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/utilities/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/osa/inc)
@@ -82,19 +80,20 @@ ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/hal/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/drivers/inc)
     INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../platform/system/inc)
-    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../boards/Glaux)
+    INCLUDE_DIRECTORIES(${ProjDirPath}/../../../../boards/Warp)
 ENDIF()
 
 # ADD_EXECUTABLE
-ADD_EXECUTABLE(Glaux 
+ADD_EXECUTABLE(Warp 
     "${ProjDirPath}/../../../../platform/utilities/src/fsl_misc_utilities.c"
     "${ProjDirPath}/../../../../platform/startup/MKL03Z4/gcc/startup_MKL03Z4.S"
     "${ProjDirPath}/../../src/boot.c"
     "${ProjDirPath}/../../src/errstrsEN.c"
     "${ProjDirPath}/../../src/powermodes.c"
-    "${ProjDirPath}/../../src/devIS25xP.c"
-    "${ProjDirPath}/../../src/devBME680.c"
-    "${ProjDirPath}/../../src/devRV8803C7.c"
+    "${ProjDirPath}/../../src/devMMA8451Q.c"
+    "${ProjDirPath}/../../src/devSSD1331.c"
+    "${ProjDirPath}/../../src/devINA219.c"
+    "${ProjDirPath}/../../src/activity.c"
     "${ProjDirPath}/../../src/SEGGER_RTT.c"
     "${ProjDirPath}/../../src/SEGGER_RTT_printf.c"
     "${ProjDirPath}/../../../../platform/drivers/src/i2c/fsl_i2c_irq.c"
@@ -103,31 +102,31 @@ ADD_EXECUTABLE(Glaux
     "${ProjDirPath}/../../../../platform/startup/MKL03Z4/system_MKL03Z4.c"
     "${ProjDirPath}/../../../../platform/startup/startup.c"
     "${ProjDirPath}/../../../../platform/startup/startup.h"
-    "${ProjDirPath}/../../../../boards/Glaux/gpio_pins.c"
-    "${ProjDirPath}/../../../../boards/Glaux/gpio_pins.h"
+    "${ProjDirPath}/../../../../boards/Warp/gpio_pins.c"
+    "${ProjDirPath}/../../../../boards/Warp/gpio_pins.h"
 )
-SET_TARGET_PROPERTIES(Glaux PROPERTIES OUTPUT_NAME "Glaux.elf")
+SET_TARGET_PROPERTIES(Warp PROPERTIES OUTPUT_NAME "Warp.elf")
 
-TARGET_LINK_LIBRARIES(Glaux -Wl,--start-group)
+TARGET_LINK_LIBRARIES(Warp -Wl,--start-group)
 # LIBRARIES
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
-    TARGET_LINK_LIBRARIES(Glaux ${ProjDirPath}/../../../../lib/ksdk_platform_lib/armgcc/KL03Z4/debug/libksdk_platform.a)
+    TARGET_LINK_LIBRARIES(Warp ${ProjDirPath}/../../../../lib/ksdk_platform_lib/armgcc/KL03Z4/debug/libksdk_platform.a)
 ELSEIF(CMAKE_BUILD_TYPE MATCHES Release)
-    TARGET_LINK_LIBRARIES(Glaux ${ProjDirPath}/../../../../lib/ksdk_platform_lib/armgcc/KL03Z4/release/libksdk_platform.a)
+    TARGET_LINK_LIBRARIES(Warp ${ProjDirPath}/../../../../lib/ksdk_platform_lib/armgcc/KL03Z4/release/libksdk_platform.a)
 ENDIF()
 
 # SYSTEM LIBRARIES
-TARGET_LINK_LIBRARIES(Glaux m)
-TARGET_LINK_LIBRARIES(Glaux c)
-TARGET_LINK_LIBRARIES(Glaux gcc)
-TARGET_LINK_LIBRARIES(Glaux nosys)
-TARGET_LINK_LIBRARIES(Glaux -Wl,--end-group)
+TARGET_LINK_LIBRARIES(Warp m)
+TARGET_LINK_LIBRARIES(Warp c)
+TARGET_LINK_LIBRARIES(Warp gcc)
+TARGET_LINK_LIBRARIES(Warp nosys)
+TARGET_LINK_LIBRARIES(Warp -Wl,--end-group)
 
 # MAP FILE
-SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}  -Xlinker -Map=debug/Glaux.map")
-SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}  -Xlinker -Map=release/Glaux.map")
+SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG}  -Xlinker -Map=debug/Warp.map")
+SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}  -Xlinker -Map=release/Warp.map")
 
 # BIN AND HEX
-ADD_CUSTOM_COMMAND(TARGET Glaux POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Oihex ${EXECUTABLE_OUTPUT_PATH}/Glaux.elf ${EXECUTABLE_OUTPUT_PATH}/Glaux.hex)
-ADD_CUSTOM_COMMAND(TARGET Glaux POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Obinary ${EXECUTABLE_OUTPUT_PATH}/Glaux.elf ${EXECUTABLE_OUTPUT_PATH}/Glaux.bin)
-ADD_CUSTOM_COMMAND(TARGET Glaux POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Osrec ${EXECUTABLE_OUTPUT_PATH}/Glaux.elf ${EXECUTABLE_OUTPUT_PATH}/Glaux.srec)
+ADD_CUSTOM_COMMAND(TARGET Warp POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Oihex ${EXECUTABLE_OUTPUT_PATH}/Warp.elf ${EXECUTABLE_OUTPUT_PATH}/Warp.hex)
+ADD_CUSTOM_COMMAND(TARGET Warp POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Obinary ${EXECUTABLE_OUTPUT_PATH}/Warp.elf ${EXECUTABLE_OUTPUT_PATH}/Warp.bin)
+ADD_CUSTOM_COMMAND(TARGET Warp POST_BUILD COMMAND ${CMAKE_OBJCOPY} -Osrec ${EXECUTABLE_OUTPUT_PATH}/Warp.elf ${EXECUTABLE_OUTPUT_PATH}/Warp.srec)

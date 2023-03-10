@@ -2,6 +2,13 @@
  *	See https://github.com/adafruit/Adafruit-SSD1331-OLED-Driver-Library-for-Arduino for the Arduino driver.
  */
 
+#include <stdint.h>
+
+#define SSD1331_SCR_WIDTH	 96
+#define SSD1331_SCR_HEIGHT	 64
+#define SSD1331_CHAR_WIDTH	 7
+#define SSD1331_CHAR_HEIGHT  9
+
 typedef enum
 {
 	kSSD1331ColororderRGB		= 1,
@@ -42,4 +49,20 @@ typedef enum
 	kSSD1331CommandVCOMH		= 0xBE,
 } SSD1331Commands;
 
+typedef enum {
+	kSSD1331ColorWHITE = 0xFFFFFF,
+	kSSD1331ColorRED   = 0xFF0000,
+	kSSD1331ColorGREEN = 0x00FF00,
+	kSSD1331ColorBLUE  = 0x0000FF,
+	kSSD1331ColorBLACK = 0x000000,
+} SSD1331Colors;
+
 int	devSSD1331init(void);
+
+void clearScreen(void);
+void drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_t g_y, SSD1331Colors color);
+void clearRegion(uint8_t s_x, uint8_t s_y, uint8_t w, uint8_t h);
+void drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color);
+void drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color);
+uint8_t drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors color);
+uint8_t drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color);

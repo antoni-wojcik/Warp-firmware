@@ -1,0 +1,13 @@
+#define TRACKER_REFRESH_RATE_MS         50
+#define TRACKER_NUM_AXES                3
+#define TRACKER_NUM_FEATURES            4
+#define TRACKER_NUM_CLASSES             3
+#define TRACKER_NUM_MEASUREMENTS        200
+
+
+void trackerUpdate(void);
+void trackerProcess(void);
+void trackerClassify(void);
+void trackerClearFeatures(void);
+void trackerInit(void);
+void trackerDrawCountdown(uint8_t time);

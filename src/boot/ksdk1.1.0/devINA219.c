@@ -65,7 +65,7 @@ writeSensorRegisterINA219(uint8_t deviceRegister, uint16_t payload)
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 	commandByte[0] = deviceRegister;
 	payloadByte[0] = (payload >> 8) & 0xFF;
     payloadByte[1] = (payload     ) & 0xFF;
@@ -93,7 +93,7 @@ configureSensorINA219(uint16_t payloadCONF, uint16_t payloadCAL)
 	WarpStatus	i2cWriteStatus1, i2cWriteStatus2;
 
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
 	i2cWriteStatus1 = writeSensorRegisterINA219(kWarpSensorConfigurationRegisterINA219_CONF /* register address CONFIGURATION */,
 							payloadCONF/* payload: Configure the sensor */
@@ -135,7 +135,7 @@ readSensorRegisterINA219(uint8_t deviceRegister, int numberOfBytes)
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 	cmdBuf[0] = deviceRegister;
 	warpEnableI2Cpins();
 
@@ -168,7 +168,7 @@ tryI2CSlaveReadSensorRegister(uint8_t i2cAddress)
 		.baudRate_kbps = gWarpI2cBaudRateKbps
 	};
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 	warpEnableI2Cpins();
 
 	status = I2C_DRV_MasterReceiveDataBlocking(
@@ -203,7 +203,7 @@ printAllSensorDataINA219(bool hexModeFlag)
 	int32_t resistance;
 
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
 
     /* Read the shunt voltage. With the With the CONFIGURATION REGISTER set to 0x399F, the shunt voltage LSB is 0.01 mV */
@@ -282,7 +282,7 @@ printCurrentMicroamperesINA219(bool readCurrentDirectly)
 	int32_t 	currentMicroamperes;
 
 
-	warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
+	//warpScaleSupplyVoltage(deviceINA219State.operatingVoltageMillivolts);
 
 	if (readCurrentDirectly)
 	{
