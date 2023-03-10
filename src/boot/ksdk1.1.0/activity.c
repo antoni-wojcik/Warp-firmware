@@ -201,12 +201,13 @@ void
 trackerInit(void)
 {
     drawText("Booted", 6, 0, 0, kSSD1331ColorWHITE);
-    drawText("Running...", 11, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING), kSSD1331ColorWHITE);
+    drawText("Running...", 10, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING), kSSD1331ColorWHITE);
     drawLine(0, 0, SSD1331_SCR_WIDTH - 1, 0, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 3 + LINE_SPACING, kSSD1331ColorBLUE);
 }
 
 void
 trackerDrawCountdown(uint8_t time)
 {
+    drawText("Time left:", 10, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
     drawDigit(time, SSD1331_SCR_WIDTH - SSD1331_CHAR_WIDTH - 1, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
 }

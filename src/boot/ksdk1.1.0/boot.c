@@ -701,6 +701,9 @@ main(void)
 		
 		frame_count++;
 
+		time_countdown_prev = time_countdown;
+		time_countdown = (uint8_t)(((TRACKER_NUM_MEASUREMENTS - (uint16_t)(frame_count)) * TRACKER_REFRESH_RATE_MS) / 1000);
+
 		if(frame_count == TRACKER_NUM_MEASUREMENTS)
 		{
 			trackerProcess();
@@ -711,9 +714,6 @@ main(void)
 
 			frame_count = 0;
 		}
-
-		time_countdown_prev = time_countdown;
-		time_countdown = (uint8_t)(((TRACKER_NUM_MEASUREMENTS - (uint16_t)(frame_count)) * TRACKER_REFRESH_RATE_MS) / 1000);
 
 		if(time_countdown != time_countdown_prev) {
 			trackerDrawCountdown(time_countdown);

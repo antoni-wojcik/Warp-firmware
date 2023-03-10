@@ -191,7 +191,7 @@ drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 		}
 		default:
 		{
-			warpPrint("ERROR: SSD1331: drawDigit");
+			warpPrint("ERROR: SSD1331: drawDigit %d\n", digit);
 		}
 	}
 }
@@ -441,7 +441,7 @@ drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 		}
 		default:
 		{
-			warpPrint("ERROR: SSD1331: drawChar");
+			warpPrint("ERROR: SSD1331: drawChar %c\n", character);
 		}
 	}
 }
