@@ -261,7 +261,7 @@ warpEnableSPIpins(void)
 	 */
 	uint32_t			calculatedBaudRate;
 	spiUserConfig.polarity		= kSpiClockPolarity_ActiveHigh;
-	spiUserConfig.phase		= kSpiClockPhase_FirstEdge;
+	spiUserConfig.phase			= kSpiClockPhase_FirstEdge;
 	spiUserConfig.direction		= kSpiMsbFirst;
 	spiUserConfig.bitsPerSec	= gWarpSpiBaudRateKbps * 1000;
 	SPI_DRV_MasterInit(0 /* SPI master instance */, (spi_master_state_t *)&spiMasterState);
@@ -686,6 +686,8 @@ main(void)
 	uint32_t start_time				= 0;
 	uint32_t delay					= 0;
 	uint16_t frame_count			= 0;
+
+	trackerInit();
 
 
 	while(1) {

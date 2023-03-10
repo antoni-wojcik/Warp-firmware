@@ -87,7 +87,9 @@ getClass() {
         }
     }
 
-    uint8_t x_offset = 0;
+    clearScreen();
+
+    /*uint8_t x_offset;
 
     switch(class_max_prob)
     {
@@ -107,10 +109,22 @@ getClass() {
             break;
         }
     }
-    
+
     x_offset += drawProb(max_prob, x_offset, 0, kSSD1331ColorWHITE);
 
-    warpPrint("X-offset = %d\n", x_offset);
+    warpPrint("X-offset = %d\n", x_offset);*/
+
+    uint8_t x_offset;
+
+    x_offset = drawText("Walking:", 8, 0, 0, kSSD1331ColorWHITE);
+    drawProb(prob_class[0], x_offset, 0, kSSD1331ColorWHITE);
+
+    x_offset = drawText("Jogging:", 8, 0, 0, kSSD1331ColorWHITE);
+    drawProb(prob_class[1], x_offset, SSD1331_CHAR_HEIGHT + 2, kSSD1331ColorWHITE);
+
+    x_offset = drawText("Idle:", 5, 0, 0, kSSD1331ColorWHITE);
+    drawProb(prob_class[2], x_offset, (SSD1331_CHAR_HEIGHT + 2) * 2, kSSD1331ColorWHITE);
+
 }
 
 
@@ -187,4 +201,10 @@ trackerClearFeatures()
         meanAcc[i]   = 0.0;
         meanAccSq[i] = 0.0;
     }
+}
+
+void
+trackerInit()
+{
+    drawText("Booted", 6, 0, 0, kSSD1331ColorWHITE);
 }
