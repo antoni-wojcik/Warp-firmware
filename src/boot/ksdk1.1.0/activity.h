@@ -5,7 +5,9 @@
 #define TRACKER_NUM_MEASUREMENTS        200
 
 
-void trackerUpdate();
-void trackerProcess();
-void trackerClassify();
-void trackerClearFeatures();
+void trackerUpdate(void);
+void trackerProcess(void);
+void trackerClassify(void);
+void trackerClearFeatures(void);
+void trackerInit(void);
+void trackerDrawCountdown(uint8_t time);

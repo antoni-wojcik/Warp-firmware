@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#define SSD1331_SCR_WIDTH	 96
+#define SSD1331_SCR_HEIGHT	 64
 #define SSD1331_CHAR_WIDTH	 7
 #define SSD1331_CHAR_HEIGHT  9
 

@@ -686,6 +686,8 @@ main(void)
 	uint32_t start_time				= 0;
 	uint32_t delay					= 0;
 	uint16_t frame_count			= 0;
+	uint8_t  time_countdown			= 0;
+	uint8_t  time_countdown_prev	= 0;
 
 	trackerInit();
 
@@ -708,6 +710,13 @@ main(void)
 			trackerClearFeatures();
 
 			frame_count = 0;
+		}
+
+		time_countdown_prev = time_countdown;
+		time_countdown = (uint8_t)(((TRACKER_NUM_MEASUREMENTS - (uint16_t)(frame_count)) * TRACKER_REFRESH_RATE_MS) / 1000);
+
+		if(time_countdown != time_countdown_prev) {
+			trackerDrawCountdown(time_countdown);
 		}
 
 		delay = OSA_TimeGetMsec() - start_time;

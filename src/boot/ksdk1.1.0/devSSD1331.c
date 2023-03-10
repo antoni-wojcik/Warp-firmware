@@ -40,7 +40,7 @@ writeCommand(uint8_t commandByte)
 	 *	Make sure there is a high-to-low transition by first driving high, delay, then drive low.
 	 */
 	GPIO_DRV_SetPinOutput(kSSD1331PinCSn);
-	OSA_TimeDelay(1);
+	//OSA_TimeDelay(1);
 	GPIO_DRV_ClearPinOutput(kSSD1331PinCSn);
 
 	/*
@@ -420,6 +420,7 @@ drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 		case '.':
 		{
 			drawLine(0, 8, 0, 8, x, y, color);
+			break;
 		}
 		case ':':
 		{
@@ -459,7 +460,8 @@ drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors col
 			case '.':
 			case ':':
 			{
-				x_offset += 2;
+				x_offset += 3;
+				break;
 			}
 			default:
 			{
@@ -481,6 +483,8 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 
 	uint8_t digit;
 
+	bool num_started = false;
+
 	for(uint8_t i = 0; i < precision; i++)
 	{
 		digit = (uint8_t)(prob) % 10;
@@ -490,9 +494,11 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 		if(i == 0 && digit != 1)
 		{
 			continue;
+		} else if(digit > 0 || num_started || i == (precision - 1))
+		{
+			drawDigit(digit, x + x_offset, y, color);
+			num_started = true;
 		}
-
-		drawDigit(digit, x + x_offset, y, color);
 
 		x_offset += SSD1331_CHAR_WIDTH + 1;
 
