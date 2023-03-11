@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <math.h>
 
 /*
  *	config.h needs to come first
@@ -479,11 +480,13 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 {
 	uint8_t x_offset = 0;
 
-	uint8_t precision = 3;
+	const uint8_t precision = 3;
 
 	uint8_t digit;
 
 	bool num_started = false;
+
+	prob = round(prob * 100.0) / 100.0;
 
 	for(uint8_t i = 0; i < precision; i++)
 	{
@@ -491,10 +494,7 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 
 		prob *= 10.0;
 
-		if(i == 0 && digit != 1)
-		{
-			continue;
-		} else if(digit > 0 || num_started || i == (precision - 1))
+		if(digit > 0 || num_started || i == (precision - 1))
 		{
 			drawDigit(digit, x + x_offset, y, color);
 			num_started = true;

@@ -78,7 +78,7 @@ getClass(REG_VAL_TYPE* prob_class) {
 void
 drawResults(REG_VAL_TYPE* prob_class)
 {
-    const char class_names[3][9] = {"Walking: ", "Running: ", "Idle:    "};
+    const char class_names[3][8] = {"Walking:", "Running:", "Idle:   "};
 
     REG_VAL_TYPE max_prob = 0.0;
     uint8_t class_max_prob = 0;
@@ -110,8 +110,8 @@ drawResults(REG_VAL_TYPE* prob_class)
             text_color = kSSD1331ColorWHITE;
         }
 
-        x_offset = drawText(class_names[j], 9, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * j, text_color);
-        drawProb(prob_class[j], x_offset, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * j, text_color);
+        x_offset = drawText(class_names[j], 8, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * j, text_color);
+        drawProb(prob_class[j], x_offset + 6, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * j, text_color);
     }
 
     drawLine(0, 0, SSD1331_SCR_WIDTH - 1, 0, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 3 + LINE_SPACING, kSSD1331ColorBLUE);
@@ -208,6 +208,9 @@ trackerInit(void)
 void
 trackerDrawCountdown(uint8_t time)
 {
-    drawText("Time left:", 10, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
-    drawDigit(time, SSD1331_SCR_WIDTH - SSD1331_CHAR_WIDTH - 1, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
+    if(time == 9)
+    {
+        drawText("Time left:", 10, 0, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
+    }
+    drawDigit(time, SSD1331_SCR_WIDTH - SSD1331_CHAR_WIDTH, (SSD1331_CHAR_HEIGHT + LINE_SPACING) * 4, kSSD1331ColorBLUE);
 }
