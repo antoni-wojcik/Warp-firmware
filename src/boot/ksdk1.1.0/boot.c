@@ -3152,7 +3152,8 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelay
 	#endif
 	#if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 	numberOfConfigErrors += configureSensorMMA8451Q(0x00,/* Payload: Disable FIFO */
-					0x01/* Normal read 8bit, 800Hz, normal, active mode */
+					0x01,/* 4g range */
+					0x01/* Normal read 14bit, 800Hz, normal, active mode */
 					);
 	#endif
 	#if (WARP_BUILD_ENABLE_DEVINA219)
