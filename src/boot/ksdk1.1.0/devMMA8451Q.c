@@ -316,6 +316,7 @@ printSensorDataMMA8451Q(bool hexModeFlag)
 	}
 }
 
+/* get the acceleration at a given axis at 14-bit precision by reading two bytes over I2C and combining them */
 int16_t
 getRegisterValueCombined(WarpSensorOutputRegister address)
 {

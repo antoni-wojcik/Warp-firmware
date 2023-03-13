@@ -34,8 +34,6 @@ def load_data_source(dataset_path):
 
         columns = []
         if(NUM_FEATURES > 1):
-            #columns.extend(list(range(31,46,1)))
-            #columns.extend(list(range(31,34,1)))
             columns.extend(list(range(40,43,1)))
             
         columns.extend([91])
@@ -115,34 +113,6 @@ def plot_convergence(clf, X, y):
 
     plt.show()
 
-def combine_acc_gyro(y_acc, y_gyro, X_acc, X_gyro):
-    X, y = None, None
-
-    i, j = 0, 0
-
-    while(i < len(y_acc) and j < len(y_gyro)):
-        if(y_acc[i] == y_gyro[j]):
-            y_line = y_acc[i]
-
-            X_line = np.hstack((X_acc[i, :], X_gyro[j, :]))
-
-            if(i == 0 and j == 0):
-                y = y_line
-                X = X_line
-            else:
-                y = np.hstack((y, y_line))
-                X = np.vstack((X, X_line))
-
-            i += 1
-            j += 1
-        else:
-            if(y_acc[i] != y_acc[i-1]):
-                j += 1
-            else:
-                i += 1
-
-    return X, y
-
 
 def main():
     X, y = load_data_source('/Users/antoni/Documents/CAMBRIDGE/MRes/Courses/Embedded_Systems_for_the_Internet_of_Things/Coursework/Coursework_4/wisdm-dataset/arff_files/watch/accel/data_{}_accel_watch.arff')
@@ -162,11 +132,7 @@ def main():
     # Print the classification report 
     print(classification_report(y_test, y_pred))  
 
-    idx = 13
-
-    X_t_1 = X_test[idx, :]
-    y_t_1 = y_test[idx]
-
+    # Get means and standard deviation and print
     priors = clf.class_prior_
     means = clf.theta_
     sds = np.sqrt(clf.var_)
@@ -174,9 +140,15 @@ def main():
     print(means)
     print(sds)
 
+    # If flag true, test the custom function to classify data points to compare with sklearn implementation
     show_prob = False
 
     if(show_prob):
+        idx = 13
+
+        X_t_1 = X_test[idx, :]
+        y_t_1 = y_test[idx]
+
         prob = np.zeros((4))
 
         for i in range(4):

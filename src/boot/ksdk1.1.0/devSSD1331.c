@@ -65,6 +65,7 @@ writeCommand(uint8_t commandByte)
 	return status;
 }
 
+/* clear the entire screen */
 void
 clearScreen(void)
 {
@@ -75,6 +76,7 @@ clearScreen(void)
     writeCommand(0x3F);
 }
 
+/* clear a region of the screen */
 void
 clearRegion(uint8_t s_x, uint8_t s_y, uint8_t w, uint8_t h)
 {
@@ -85,6 +87,10 @@ clearRegion(uint8_t s_x, uint8_t s_y, uint8_t w, uint8_t h)
     writeCommand(s_y + h);
 }
 
+/* draw a line:
+   g_x, g_y - global location of the points describing the line
+   s_x, s_y - relative start point,
+   e_x, e_y - relative end point */
 void
 drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_t g_y, SSD1331Colors color)
 {
@@ -102,10 +108,12 @@ drawLine(uint8_t s_x, uint8_t s_y, uint8_t e_x, uint8_t e_y, uint8_t g_x, uint8_
     writeCommand(col_b);
 }
 
-/* 7 x 9 characters */
+/* draw a single digit at a location given by x, y 
+   size: 7 x 9 characters */
 void
 drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 {
+	// numbers are dynamically modified, so we should clear the previous values from the screen
 	clearRegion(x, y, SSD1331_CHAR_WIDTH - 1, SSD1331_CHAR_HEIGHT - 1);
 
 	switch(digit)
@@ -197,10 +205,12 @@ drawDigit(uint8_t digit, uint8_t x, uint8_t y, SSD1331Colors color)
 	}
 }
 
-/* 7 x 9 characters */
+/* draw a single character at a location given by x, y 
+   size: 7 x 9 characters (with exceptions) */
 void
 drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 {
+	// clearRegion not used because in all cases text is static
 	//clearRegion(x, y, SSD1331_CHAR_WIDTH - 1, SSD1331_CHAR_HEIGHT - 1);
 
 	switch(character)
@@ -447,6 +457,8 @@ drawChar(char character, uint8_t x, uint8_t y, SSD1331Colors color)
 	}
 }
 
+/* draw text of lenght size on the screen at the specified locaiton x, y and the color 
+   return the width fo the drawn text */
 uint8_t
 drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors color)
 {
@@ -474,7 +486,8 @@ drawText(const char* text, uint8_t size, uint8_t x, uint8_t y, SSD1331Colors col
 	return x_offset;
 }
 
-// draw porbabilty with the given precision. Assume prob <= 1
+/* draw porbabilty in decimal %, at specified locaiton x, y and the color. Assume prob <= 1
+   return the width fo the drawn text */
 uint8_t
 drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 {
@@ -509,22 +522,6 @@ drawProb(double prob, uint8_t x, uint8_t y, SSD1331Colors color)
 	x_offset += SSD1331_CHAR_WIDTH + 1;
 
 	return x_offset;
-}
-
-void
-drawRect(void)
-{
-	writeCommand(kSSD1331CommandDRAWRECT);
-	writeCommand(0x00); // set column address of start
-	writeCommand(0x00); // set row address of start
-	writeCommand(0x5F); // set column address of end
-	writeCommand(0x3F); // set row address of end
-	writeCommand(0x00); // R intensity - outline
-	writeCommand(0xFF); // G intensity - outline
-	writeCommand(0x00); // B intensity - outline
-	writeCommand(0x00); // R intensity - fill
-	writeCommand(0xFF); // G intensity - fill
-	writeCommand(0x00); // B intensity - fill
 }
 
 int
@@ -613,13 +610,6 @@ devSSD1331init(void)
 	 *	Clear Screen
 	 */
 	clearScreen();
-
-	// drawRect();
-
-	/*for(int i = 0; i <= 9; i++) {
-		drawDigit(i, i * (SSD1331_CHAR_WIDTH + 1), 0, kSSD1331ColorWHITE);
-	}*/
-
 	
 
 

@@ -1642,6 +1642,9 @@ main(void)
 		repeatPrintCurrentMicroamperesINA219(1000);
 	#endif
 
+	/* START OF THE ACTIVITY CLASSIFIER/TRACKER CODE */
+
+	/* */
 	configureSensorMMA8451Q(0x00, /* Payload: Disable FIFO */
 			0x01,/* +/- 4g measurement range */
 			0x01 /* Normal read 8bit, 800Hz, normal, active mode */
@@ -1654,14 +1657,14 @@ main(void)
 		uint8_t  time_countdown			= 0;
 		uint8_t  time_countdown_prev	= 0;
 
+		/* initialize the activity tracker */
 		trackerInit();
 
-
+		/* run the activity tracker continuously without interruptions */
 		while(1) {
 			start_time = OSA_TimeGetMsec();
 
-			//warpPrint("Taking measurement: %d\n", frame_count);
-
+			/* measure current acceleration and process */
 			trackerUpdate();
 			
 			frame_count++;
@@ -1669,6 +1672,8 @@ main(void)
 			time_countdown_prev = time_countdown;
 			time_countdown = (uint8_t)(((TRACKER_NUM_MEASUREMENTS - (uint16_t)(frame_count)) * TRACKER_REFRESH_RATE_MS) / 1000);
 
+			/* when the whole measurement window finished 
+			   - post-ptorcess the data and classify activity */
 			if(frame_count == TRACKER_NUM_MEASUREMENTS)
 			{
 				trackerProcess();
@@ -1680,12 +1685,14 @@ main(void)
 				frame_count = 0;
 			}
 
+			/* draw time countdown when it changes */
 			if(time_countdown != time_countdown_prev) {
 				trackerDrawCountdown(time_countdown);
 			}
 
 			delay = OSA_TimeGetMsec() - start_time;
 
+			/* ensure 20Hz measurement sample rate */
 			if(delay < TRACKER_REFRESH_RATE_MS)
 			{
 				OSA_TimeDelay(TRACKER_REFRESH_RATE_MS - delay);
