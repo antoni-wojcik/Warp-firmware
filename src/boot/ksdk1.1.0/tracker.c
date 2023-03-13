@@ -7,7 +7,7 @@
 #include "config.h"
 #include "warp.h"
 
-#include "activity.h"
+#include "tracker.h"
 
 #include "devMMA8451Q.h"
 #include "devSSD1331.h"
@@ -127,7 +127,7 @@ trackerUpdate(void)
     {
         int16_t acc_i = getRegisterValueCombined(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB + i * 2);
 
-        REG_VAL_TYPE acc = (REG_VAL_TYPE)(acc_i) * G_VAL / 4096.0;
+        REG_VAL_TYPE acc = (REG_VAL_TYPE)(acc_i) * G_VAL / 2048.0;
 
         // Mean values
 
