@@ -64,7 +64,7 @@ getClass(double* prob_class) {
             double prob_feature = gaussian(featureBuff[i], mean[j * TRACKER_NUM_FEATURES + i], std[j * TRACKER_NUM_FEATURES + i]);
 
             #if(TRACKER_DEBUG)
-                warpPrint("Prob feature %d, classm %d: %de-3\n", i, j, (uint32_t)(prob_feature * 1000.0));
+                warpPrint("Prob feature %d, class %d: %de-3\n", i, j, (uint32_t)(prob_feature * 1000.0));
             #endif
 
             prob_class[j] *= prob_feature;

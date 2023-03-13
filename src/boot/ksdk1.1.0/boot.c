@@ -217,7 +217,6 @@ char							gWarpPrintBuffer[kWarpDefaultPrintBufferSizeBytes];
 uint8_t							gWarpSpiCommonSourceBuffer[kWarpMemoryCommonSpiBufferBytes];
 uint8_t							gWarpSpiCommonSinkBuffer[kWarpMemoryCommonSpiBufferBytes];
 
-static void						sleepUntilReset(void);
 static void						lowPowerPinStates(void);
 
 #if (!WARP_BUILD_ENABLE_GLAUX_VARIANT && !WARP_BUILD_ENABLE_FRDMKL03)
@@ -225,25 +224,6 @@ static void						lowPowerPinStates(void);
 	static void					enableTPS62740(uint16_t voltageMillivolts);
 	static void					setTPS62740CommonControlLines(uint16_t voltageMillivolts);
 #endif
-
-static void						dumpProcessorState(void);
-static void						repeatRegisterReadForDeviceAndAddress(WarpSensorDevice warpSensorDevice, uint8_t baseAddress,
-								bool autoIncrement, int chunkReadsPerAddress, bool chatty,
-								int spinDelay, int repetitionsPerAddress, uint16_t sssupplyMillivolts,
-								uint16_t adaptiveSssupplyMaxMillivolts, uint8_t referenceByte);
-static int						char2int(int character);
-static void						activateAllLowPowerSensorModes(bool verbose);
-static void						powerupAllSensors(void);
-static uint8_t						readHexByte(void);
-static int						read4digits(void);
-static void						printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag, int menuDelayBetweenEachRun, bool loopForever);
-
-/*
- *	TODO: change the following to take byte arrays
- */
-WarpStatus						writeByteToI2cDeviceRegister(uint8_t i2cAddress, bool sendCommandByte, uint8_t commandByte, bool sendPayloadByte, uint8_t payloadByte);
-WarpStatus						writeBytesToSpi(uint8_t *  payloadBytes, int payloadLength);
-
 
 void							warpLowPowerSecondsSleep(uint32_t sleepSeconds, bool forceAllPinsIntoLowPowerState);
 
@@ -374,27 +354,6 @@ callback0(power_manager_notify_struct_t *  notify, power_manager_callback_data_t
 /*
  *	Derived from KSDK power_manager_demo.c <<END
  */
-
-
-
-void
-sleepUntilReset(void)
-{
-	while (1)
-	{
-		#if (WARP_BUILD_ENABLE_DEVSI4705)
-			GPIO_DRV_SetPinOutput(kWarpPinSI4705_nRST);
-		#endif
-
-		warpLowPowerSecondsSleep(1, false /* forceAllPinsIntoLowPowerState */);
-
-		#if (WARP_BUILD_ENABLE_DEVSI4705)
-			GPIO_DRV_ClearPinOutput(kWarpPinSI4705_nRST);
-		#endif
-
-		warpLowPowerSecondsSleep(60, true /* forceAllPinsIntoLowPowerState */);
-	}
-}
 
 
 void
@@ -1148,29 +1107,6 @@ printPinDirections(void)
 
 
 void
-dumpProcessorState(void)
-{
-	uint32_t	cpuClockFrequency;
-
-	CLOCK_SYS_GetFreq(kCoreClock, &cpuClockFrequency);
-	warpPrint("\r\n\n\tCPU @ %u KHz\n", (cpuClockFrequency / 1000));
-	warpPrint("\r\tCPU power mode: %u\n", POWER_SYS_GetCurrentMode());
-	warpPrint("\r\tCPU clock manager configuration: %u\n", CLOCK_SYS_GetCurrentConfiguration());
-	warpPrint("\r\tRTC clock: %d\n", CLOCK_SYS_GetRtcGateCmd(0));
-	warpPrint("\r\tSPI clock: %d\n", CLOCK_SYS_GetSpiGateCmd(0));
-	warpPrint("\r\tI2C clock: %d\n", CLOCK_SYS_GetI2cGateCmd(0));
-	warpPrint("\r\tLPUART clock: %d\n", CLOCK_SYS_GetLpuartGateCmd(0));
-	warpPrint("\r\tPORT A clock: %d\n", CLOCK_SYS_GetPortGateCmd(0));
-	warpPrint("\r\tPORT B clock: %d\n", CLOCK_SYS_GetPortGateCmd(1));
-	warpPrint("\r\tFTF clock: %d\n", CLOCK_SYS_GetFtfGateCmd(0));
-	warpPrint("\r\tADC clock: %d\n", CLOCK_SYS_GetAdcGateCmd(0));
-	warpPrint("\r\tCMP clock: %d\n", CLOCK_SYS_GetCmpGateCmd(0));
-	warpPrint("\r\tVREF clock: %d\n", CLOCK_SYS_GetVrefGateCmd(0));
-	warpPrint("\r\tTPM clock: %d\n", CLOCK_SYS_GetTpmGateCmd(0));
-}
-
-
-void
 printBootSplash(uint16_t gWarpCurrentSupplyVoltage, uint8_t menuRegisterAddress, WarpPowerManagerCallbackStructure *  powerManagerCallbackStructure)
 {
 	/*
@@ -1407,10 +1343,6 @@ int
 main(void)
 {
 	WarpStatus				status;
-	uint8_t					key;
-	WarpSensorDevice			menuTargetSensor		= kWarpSensorBMX055accel;
-	volatile WarpI2CDeviceState *		menuI2cDevice			= NULL;
-	uint8_t					menuRegisterAddress		= 0x00;
 	rtc_datetime_t				warpBootDate;
 	power_manager_user_config_t		warpPowerModeWaitConfig;
 	power_manager_user_config_t		warpPowerModeStopConfig;
@@ -1659,6 +1591,8 @@ main(void)
 
 		/* initialize the activity tracker */
 		trackerInit();
+
+		warpPrint("Activity classifier running.\n");
 
 		/* run the activity tracker continuously without interruptions */
 		while(1) {
