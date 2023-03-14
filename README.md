@@ -19,13 +19,32 @@ The firmware initialzies drivers for the sensors and displays in [boot.c](./src/
 
 In this work, I started with the original [Warp repository](https://github.com/physical-computation/Warp-firmware). Then I modified [boot.c](./src/boot/ksdk1.1.0/boot.c) by removing the Warp menu implementation and redundant related functions. Instead, I wrote the loop that handles data acquisition and processing and displaying the results.
 
-Therefore, all the modifies files are:
+Therefore, all the modified files are:
 
+1. Main file:\
 [src/boot/ksdk1.1.0/boot.c](./src/boot/ksdk1.1.0/boot.c)
-[src/boot/ksdk1.1.0/devMMA8451Q.h](src/boot/ksdk1.1.0/devMMA8451Q.h)
+
+2. Activity tracker/classifier code:\
+[src/boot/ksdk1.1.0/tracker.h](src/boot/ksdk1.1.0/tracker.h)\
+[src/boot/ksdk1.1.0/tracker.c](src/boot/ksdk1.1.0/tracker.c)
+
+3. MMA8451Q accelerometer driver:\
+[src/boot/ksdk1.1.0/devMMA8451Q.h](src/boot/ksdk1.1.0/devMMA8451Q.h)\
 [src/boot/ksdk1.1.0/devMMA8451Q.c](src/boot/ksdk1.1.0/devMMA8451Q.c)
-[src/boot/ksdk1.1.0/devMMA8451Q.c](./src/boot/ksdk1.1.0/boot.c)
-[src/boot/ksdk1.1.0/devMMA8451Q.c](./src/boot/ksdk1.1.0/boot.c)
+
+4. SSD1331 OLED display driver:\
+[src/boot/ksdk1.1.0/devSSD1331.h](./src/boot/ksdk1.1.0/devSSD1331.h)\
+[src/boot/ksdk1.1.0/devSSD1331.c](./src/boot/ksdk1.1.0/devSSD1331.c)
+
+5. Config files and other:\
+[src/boot/ksdk1.1.0/warp.h](./src/boot/ksdk1.1.0/warp.h)\
+[src/boot/ksdk1.1.0/config.h](./src/boot/ksdk1.1.0/config.h)
+
+6. Make/CMake files:\
+[Makefile](Makefile)\
+[src/boot/ksdk1.1.0/CMakeLists-Warp.txt](./src/boot/ksdk1.1.0/CMakeLists-Warp.txt)
+
+To build this project, insert these files into the [Warp repository](https://github.com/physical-computation/Warp-firmware), or replace the [src](./src/) folder with the attached src folder and the [Makefile](Makefile), then follow building instructions for the baseline Warp firmware given below.
 
 
 # Baseline firmware for the [Warp](https://github.com/physical-computation/Warp-hardware) family of hardware platforms
