@@ -2,6 +2,13 @@
 
 Gaussian Naive Bayes activity classifier based on the Warp firmware for the FRDM KL03 evaluation board. It uses the MMA8451Q accelerometer to collect collect data and the SSD1331 OLED display to show the results. For the system to work properly, it is expected for the user to carry the system in their dominant hand.
 
+## Authors
+**Antoni Wojcik
+Hughes Hall, University of Cambridge
+CRSid: ajw308**
+
+The code is based on the [Warp](https://github.com/physical-computation/Warp-firmware) firmware written by Phillip Stanley-Marbell and Martin Rinard.
+
 ## Basis of operation 
 The firmware initialzies drivers for the sensors and displays in [boot.c](./src/boot/ksdk1.1.0/boot.c). The main code responsible for classifying activity is contained in the `main()` function which uses the [tracker.c](./src/boot/ksdk1.1.0/tracker.c) code to collect and analyse data. Data processing is done in the following steps:
 
@@ -14,6 +21,28 @@ The firmware initialzies drivers for the sensors and displays in [boot.c](./src/
 4. Once the classification is done, show the results on the OLED display using the [devSSD1331.c](./src/boot/ksdk1.1.0/devSSD1331.c) driver.
 
 5. Clear measurement and feature buffers and start another measurement window by going back to step 1.
+
+## Operation of the firmware on the FRDM KL03 evaluation board
+
+![Setup showing a working example of the activity tracker](./doc/doc_photo.png)
+
+The MMA8451Q sensor is embedded within the FRDM KL03 evaluation board and the SSD1331 display needs to be connected with the external pins in the following way:
+
+1. GND   - GND 
+2. 5V    - VCC
+3. PTB13 - OCS
+4. PTB0  - RST
+5. PTA12 - D/C
+6. PTA9  - SCK
+7. PTA8  - MOSI
+
+Once the firmware is built, the display should show a notification about the first measurement being taken:
+"Booted... Running"
+Below, there should be a timer counting down time until the end of the measurement window "Timer 9" to "Timer 0".
+
+Upon the completion of the first analysis, a list of classes and the probabilities of them describing the activity appears. The most likely class is marked in green. There is a timer underneath as on the initial screen.
+
+This behaviour is then looped in around 10s cycles.
 
 ## Layout of the repository
 
@@ -43,6 +72,12 @@ Therefore, all the modified files are:
 6. Make/CMake files:\
 [Makefile](Makefile)\
 [src/boot/ksdk1.1.0/CMakeLists-Warp.txt](./src/boot/ksdk1.1.0/CMakeLists-Warp.txt)
+
+7. Python script used to train the classifier:\
+[analyse.py](analyse.py)
+
+
+## Building the repository
 
 To build this project, insert these files into the [Warp repository](https://github.com/physical-computation/Warp-firmware), or replace the [src](./src/) folder with the attached src folder and the [Makefile](Makefile), then follow building instructions for the baseline Warp firmware given below.
 
