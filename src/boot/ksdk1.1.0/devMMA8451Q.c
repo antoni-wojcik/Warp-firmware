@@ -36,6 +36,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 #include <stdlib.h>
+#include <math.h>
 
 /*
  *	config.h needs to come first
@@ -61,7 +62,6 @@ extern volatile WarpI2CDeviceState	deviceMMA8451QState;
 extern volatile uint32_t		gWarpI2cBaudRateKbps;
 extern volatile uint32_t		gWarpI2cTimeoutMilliseconds;
 extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
-
 
 
 void
@@ -128,7 +128,7 @@ writeSensorRegisterMMA8451Q(uint8_t deviceRegister, uint8_t payload)
 }
 
 WarpStatus
-configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1)
+configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadXYZ_DATA, uint8_t payloadCTRL_REG1)
 {
 	WarpStatus	i2cWriteStatus1, i2cWriteStatus2;
 
@@ -137,6 +137,15 @@ configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1)
 
 	i2cWriteStatus1 = writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QF_SETUP /* register address F_SETUP */,
 							payloadF_SETUP /* payload: Disable FIFO */
+							);
+
+	// turn on standby mode
+	i2cWriteStatus2 = writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QCTRL_REG1 /* register address CTRL_REG1 */,
+							0x00 /* payload */
+							);
+
+	i2cWriteStatus2 = writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QXYZ_DATA /* register address CTRL_REG1 */,
+							payloadXYZ_DATA /* payload */
 							);
 
 	i2cWriteStatus2 = writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QCTRL_REG1 /* register address CTRL_REG1 */,
@@ -305,4 +314,33 @@ printSensorDataMMA8451Q(bool hexModeFlag)
 			warpPrint(" %d,", readSensorRegisterValueCombined);
 		}
 	}
+}
+
+/* get the acceleration at a given axis at 14-bit precision by reading two bytes over I2C and combining them */
+int16_t
+getRegisterValueCombined(WarpSensorOutputRegister address)
+{
+	uint16_t	readSensorRegisterValueLSB;
+	uint16_t	readSensorRegisterValueMSB;
+	int16_t		readSensorRegisterValueCombined;
+	WarpStatus	i2cReadStatus;
+
+	warpScaleSupplyVoltage(deviceMMA8451QState.operatingVoltageMillivolts);
+
+	i2cReadStatus = readSensorRegisterMMA8451Q(address, 2 /* numberOfBytes */);
+	readSensorRegisterValueMSB = deviceMMA8451QState.i2cBuffer[0];
+	readSensorRegisterValueLSB = deviceMMA8451QState.i2cBuffer[1];
+	readSensorRegisterValueCombined = ((readSensorRegisterValueMSB & 0xFF) << 6) | (readSensorRegisterValueLSB >> 2);
+
+	/*
+	 *	Sign extend the 14-bit value based on knowledge that upper 2 bit are 0:
+	 */
+	readSensorRegisterValueCombined = (readSensorRegisterValueCombined ^ (1 << 13)) - (1 << 13);
+
+	if (i2cReadStatus != kWarpStatusOK)
+	{
+		warpPrint("ERROR: Could not read MMA8451Q register.\n");
+	}
+
+	return readSensorRegisterValueCombined;
 }
