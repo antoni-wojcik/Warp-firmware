@@ -10,16 +10,15 @@ CRSid: ajw308**
 The code is based on the [Warp](https://github.com/physical-computation/Warp-firmware) firmware written by Phillip Stanley-Marbell and Martin Rinard.
 
 ## Basis of operation 
-The firmware initialzies drivers for the sensors and displays in [boot.c](./src/boot/ksdk1.1.0/boot.c). The main code responsible for classifying activity is contained in the `main()` function which uses the [tracker.c](./src/boot/ksdk1.1.0/tracker.c) code to collect and analyse data. Data processing is done in the following steps:
+The firmware initializes drivers for the sensors and displays in [boot.c](./src/boot/ksdk1.1.0/boot.c). The main code responsible for classifying activity is contained in the `main()` function which uses the [tracker.c](./src/boot/ksdk1.1.0/tracker.c) code to collect and analyse data. Data processing is done in the following steps:
 
 1. Collect acceleration data on x, y, z axes at 20 Hz rate in 10 s window, using the [devMMA8451Q.c](./src/boot/ksdk1.1.0/devMMA8451Q.c) driver.
-2. At the end of the widnow, extract 4 features: standard deviation of acceleration along x, y, z, and the mean magntiude of accelration vector.
-3. Use a pre-trained Gaussian Naive Bayes classifier to obtain the most likely classification of activity and the uncertainty in classification. The classifier was trained based on publicly available data [WISDM activity accelereomter dataset](https://www.cis.fordham.edu/wisdm/dataset.php).
+2.At the end of the window, extract 4 features: standard deviation of acceleration along x, y, z, and the mean magnitude of acceleration vector.
+3. Use a pre-trained Gaussian Naive Bayes classifier to obtain the most likely classification of activity and the uncertainty in classification. The classifier was trained based on publicly available data [WISDM activity accelerometer dataset](https://www.cis.fordham.edu/wisdm/dataset.php).
 
 > Jennifer R. Kwapisz, Gary M. Weiss and Samuel A. Moore (2010). Activity Recognition using Cell Phone Accelerometers, Proceedings of the Fourth International Workshop on Knowledge Discovery from Sensor Data (at KDD-10), Washington DC.
 
 4. Once the classification is done, show the results on the OLED display using the [devSSD1331.c](./src/boot/ksdk1.1.0/devSSD1331.c) driver.
-
 5. Clear measurement and feature buffers and start another measurement window by going back to step 1.
 
 ## Operation of the firmware on the FRDM KL03 evaluation board
